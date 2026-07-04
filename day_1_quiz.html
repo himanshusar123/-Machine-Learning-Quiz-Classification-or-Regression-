@@ -633,7 +633,7 @@
 
             <!-- Footer Controls -->
             <div class="footer-controls">
-                <span class="question-number" id="questionNumber">Question 1 of 5</span>
+                <span class="question-number" id="questionNumber">Question 1 of 20</span>
                 <button class="btn" id="actionBtn" disabled>Check Answer</button>
             </div>
         </div>
@@ -653,7 +653,7 @@
                 </svg>
                 <div class="score-text">
                     <span class="score-val" id="scoreVal">0</span>
-                    <span class="score-total" id="scoreTotal">/5</span>
+                    <span class="score-total" id="scoreTotal">/20</span>
                 </div>
             </div>
 
@@ -682,47 +682,34 @@
                 scenario: "You are setting up the initial profile variables for a new RetailMax employee. HR wants to record the employee ID, their precise hourly wage, and their contractor status. Which variable assignments match standard python naming conventions and appropriate primitive data types?",
                 question: "Which of the following variable setups is pythonic and correct?",
                 options: [
-                    "employee-id = 1001\\nhourly_wage = \\\"45.50\\\"\\nisContractor = true",
-                    "employee_id = 1001\\nhourly_wage = 45.50\\nis_contractor = True",
-                    "EmployeeID = 1001\\nhourlywage = 45.5\\nis_contractor = 1",
-                    "1001 = employee_id\\nhourly_wage = 45,50\\nis_contractor = \\\"YES\\\""
+                    "employee-id = 1001\nhourly_wage = \"45.50\"\nisContractor = true",
+                    "employee_id = 1001\nhourly_wage = 45.50\nis_contractor = True",
+                    "EmployeeID = 1001\nhourlywage = 45.5\nis_contractor = 1",
+                    "1001 = employee_id\nhourly_wage = 45,50\nis_contractor = \"YES\""
                 ],
                 correctIndex: 1,
                 explanation: "<p><strong>Why this is correct:</strong> Python uses <code>snake_case</code> (all letters lowercase, separated by underscores) for variables. Boolean values are strict keywords in Python and must be capitalized: <code>True</code> or <code>False</code> (not lowercase <code>true</code> or integer <code>1</code>).</p><p>Using a string for hourly wage makes mathematical operations difficult, and variable names cannot start with numbers (e.g. <code>1001 = employee_id</code> is invalid syntax).</p>"
             },
             {
-                scenario: "You are writing a script to compute the annual bonus using input text boxes from the HR GUI. The script reads monthly salary from the input box as a string. You write: <pre>annual_bonus = monthly_salary * (bonus_percentage / 100)</pre> If HR enters <code>\\\"75000\\\"</code> as the monthly salary and <code>10</code> as the bonus percentage, what will happen?",
+                scenario: "You are writing a script to compute the annual bonus using input text boxes from the HR GUI. The script reads monthly salary from the input box as a string. You write: <pre>annual_bonus = monthly_salary * (bonus_percentage / 100)</pre> If HR enters <code>\"75000\"</code> as the monthly salary and <code>10</code> as the bonus percentage, what will happen?",
                 question: "What is the result of executing this arithmetic operation in Python?",
                 options: [
                     "The expression returns 7500.0 successfully.",
-                    "The expression prints the text \\\"75000\\\" ten times.",
+                    "The expression prints the text \"75000\" ten times.",
                     "It raises a TypeError because you cannot multiply a string by a float.",
                     "The expression returns 750000.0."
                 ],
                 correctIndex: 2,
-                explanation: "<p><strong>Why this is correct:</strong> In Python, division <code>10 / 100</code> yields a float (<code>0.1</code>). The variable <code>monthly_salary</code> holds a string <code>\\\"75000\\\"</code>. In Python, trying to multiply a string by a float raises a <code>TypeError</code>.</p><p>To fix this, you must cast the string input to a numeric type first: <code>float(monthly_salary) * (bonus_percentage / 100)</code>.</p>"
+                explanation: "<p><strong>Why this is correct:</strong> In Python, division <code>10 / 100</code> yields a float (<code>0.1</code>). The variable <code>monthly_salary</code> holds a string <code>\"75000\"</code>. In Python, trying to multiply a string by a float raises a <code>TypeError</code>.</p><p>To fix this, you must cast the string input to a numeric type first: <code>float(monthly_salary) * (bonus_percentage / 100)</code>.</p>"
             },
             {
                 scenario: "You are designing the class hierarchy for the HR system. You have a base class <code>Employee</code>. You need to create a subclass <code>Manager</code> that inherits from <code>Employee</code> and introduces an additional instance attribute <code>subordinates</code> (a list of other employees).",
                 question: "What is the correct way to declare the class and initialize the parent class attributes?",
                 options: [
-                    `<pre>class Manager(Employee):
-    def __init__(self, name, salary, subordinates):
-        super().__init__(name, salary)
-        self.subordinates = subordinates</pre>`,
-                    `<pre>class Manager extends Employee:
-    def __init__(self, name, salary, subordinates):
-        Employee.__init__(name, salary)
-        self.subordinates = subordinates</pre>`,
-                    `<pre>class Manager(Employee):
-    def __init__(self, name, salary, subordinates):
-        self.name = name
-        self.salary = salary
-        self.subordinates = subordinates</pre>`,
-                    `<pre>class Manager:
-    def __init__(self, name, salary, subordinates):
-        parent = Employee(name, salary)
-        self.subordinates = subordinates</pre>`
+                    "<pre>class Manager(Employee):\n    def __init__(self, name, salary, subordinates):\n        super().__init__(name, salary)\n        self.subordinates = subordinates</pre>",
+                    "<pre>class Manager extends Employee:\n    def __init__(self, name, salary, subordinates):\n        Employee.__init__(name, salary)\n        self.subordinates = subordinates</pre>",
+                    "<pre>class Manager(Employee):\n    def __init__(self, name, salary, subordinates):\n        self.name = name\n        self.salary = salary\n        self.subordinates = subordinates</pre>",
+                    "<pre>class Manager:\n    def __init__(self, name, salary, subordinates):\n        parent = Employee(name, salary)\n        self.subordinates = subordinates</pre>"
                 ],
                 correctIndex: 0,
                 explanation: "<p><strong>Why this is correct:</strong> Python uses parenthesis to declare inheritance: <code>class Manager(Employee):</code>. The function <code>super().__init__(name, salary)</code> refers to the parent constructor and initializes the attributes defined in the <code>Employee</code> class properly.</p><p>Python does not use the keyword <code>extends</code> (which is Java/JS syntax), and bypassing the parent constructor duplicates logic and breaks class inheritance design principles.</p>"
@@ -731,24 +718,10 @@
                 scenario: "You are reading raw employee lists from a text-based report. Some lines contain incomplete values or typos in the salary column (e.g. 'CONFIDENTIAL' instead of numbers). This triggers a <code>ValueError</code> when parsing with <code>float()</code>. You want to skip these lines, print a warning, and keep reading the other lines.",
                 question: "Which code structure correctly handles the exception without crashing the entire import loop?",
                 options: [
-                    `<pre>try:
-    salary = float(row[3])
-except ValueError:
-    print("Warning: Skipping invalid row")
-    continue</pre>`,
-                    `<pre>try:
-    salary = float(row[3])
-catch ValueError:
-    print("Warning: Skipping invalid row")
-    pass</pre>`,
-                    `<pre>if type(row[3]) == float:
-    salary = row[3]
-else:
-    print("Skipping")</pre>`,
-                    `<pre>try:
-    salary = float(row[3])
-except:
-    exit()</pre>`
+                    "<pre>try:\n    salary = float(row[3])\nexcept ValueError:\n    print(\"Warning: Skipping invalid row\")\n    continue</pre>",
+                    "<pre>try:\n    salary = float(row[3])\ncatch ValueError:\n    print(\"Warning: Skipping invalid row\")\n    pass</pre>",
+                    "<pre>if type(row[3]) == float:\n    salary = row[3]\nelse:\n    print(\"Skipping\")</pre>",
+                    "<pre>try:\n    salary = float(row[3])\nexcept:\n    exit()</pre>"
                 ],
                 correctIndex: 0,
                 explanation: "<p><strong>Why this is correct:</strong> Python handles errors with <code>try...except ExceptionType:</code> blocks. Placing a <code>continue</code> statement inside the <code>except</code> block of a loop will skip the rest of the current iteration and move to the next row.</p><p>Using <code>catch</code> is a syntax error (it is not a Python keyword). In option 3, <code>type(row[3]) == float</code> will always be false because CSV cells are read as string objects. In option 4, calling <code>exit()</code> immediately terminates the entire program run instead of continuing the loop.</p>"
@@ -759,11 +732,191 @@ except:
                 options: [
                     "if response.json() == None:",
                     "if response.status_code == 200:",
-                    "if response.text == \\\"404\\\":",
+                    "if response.text == \"404\":",
                     "if response.raise_for_status() == True:"
                 ],
                 correctIndex: 1,
                 explanation: "<p><strong>Why this is correct:</strong> Checking <code>response.status_code == 200</code> ensures that the web request returned HTTP Status 200 OK. Trying to access <code>response.json()</code> on a failed request can raise a <code>requests.exceptions.JSONDecodeError</code> because the server returned an HTML error page or empty text.</p><p>The function <code>response.raise_for_status()</code> raises an exception directly if the code is not 200 OK (it does not return a boolean <code>True/False</code>), and <code>response.text</code> contains the entire response body, not just the status code string.</p>"
+            },
+            {
+                scenario: "You are generating a console report. You have the variables <code>name = \"Aman\"</code> and <code>salary = 50000</code>. You want to output <code>\"Aman earns ₹50,000\"</code> dynamically.",
+                question: "Which python f-string statement correctly prints this output with a thousands-separator?",
+                options: [
+                    "print(f\"{name} earns ₹{salary}\")",
+                    "print(f\"{name} earns ₹{salary:,}\")",
+                    "print(f\"{name} earns ₹{salary:format}\")",
+                    "print(f\"{name} earns ₹{salary.format(',')}\")"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> In Python, you can format numbers inside f-strings using the format specifier syntax. Placing a colon followed by a comma <code>{salary:,}</code> tells Python to format the number with a comma as a thousands separator.</p>"
+            },
+            {
+                scenario: "The employee shifts list is declared as <code>shifts = [\"Morning\", \"Afternoon\", \"Night\", \"General\"]</code>. You want to slice the list to extract the middle shifts: <code>[\"Afternoon\", \"Night\"]</code>.",
+                question: "Which slicing syntax will return exactly the list of middle shifts?",
+                options: [
+                    "shifts[1:2]",
+                    "shifts[1:3]",
+                    "shifts[2:4]",
+                    "shifts[1:4]"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> List slicing in Python is end-exclusive. <code>shifts[1:3]</code> returns elements at index 1 and index 2 (i.e., <code>\"Afternoon\"</code> and <code>\"Night\"</code>), but excludes index 3.</p>"
+            },
+            {
+                scenario: "You are setting up shift rotation for 3 distinct teams. You determine the current team index using the modulo operator: <code>team_index = day_number % 3</code>. If the <code>day_number</code> is 12, what is the resulting <code>team_index</code>?",
+                question: "What is the return value of 12 % 3 in Python?",
+                options: [
+                    "0",
+                    "1",
+                    "2",
+                    "4"
+                ],
+                correctIndex: 0,
+                explanation: "<p><strong>Why this is correct:</strong> The modulo operator <code>%</code> returns the remainder of the division. Since 12 is exactly divisible by 3, the remainder is 0. Thus, team index 0 is selected.</p>"
+            },
+            {
+                scenario: "You assign an employee dictionary to a new variable: <pre>emp = {\"name\": \"Priya\", \"salary\": 60000}\nemp_copy = emp\nemp_copy[\"salary\"] = 65000</pre> If you print the original salary <code>emp[\"salary\"]</code> immediately after, what value is shown?",
+                question: "What value does the original dictionary's salary hold?",
+                options: [
+                    "60000",
+                    "65000",
+                    "None",
+                    "It raises a KeyError"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> In Python, dictionaries are mutable objects. The assignment <code>emp_copy = emp</code> does not copy the dictionary content; instead, it copies the reference pointing to the same dictionary object in memory. Therefore, mutating <code>emp_copy</code> modifies <code>emp</code> as well.</p>"
+            },
+            {
+                scenario: "You are writing a CLI-based console prompt. You want to continually ask the user to enter a salary and only stop when they enter a valid positive integer digits string. Which loop structure operates correctly?",
+                question: "Which loop logic guarantees continuous prompting until a valid numeric input is received?",
+                options: [
+                    "<pre>while True:\n    salary = input(\"Salary: \")\n    if salary.isdigit():\n        break</pre>",
+                    "<pre>while salary.isdigit():\n    salary = input(\"Salary: \")</pre>",
+                    "<pre>while True:\n    salary = input(\"Salary: \")\n    if not salary.isdigit():\n        break</pre>",
+                    "<pre>for i in range(100):\n    salary = input(\"Salary: \")\n    if salary.isdigit():\n        pass</pre>"
+                ],
+                correctIndex: 0,
+                explanation: "<p><strong>Why this is correct:</strong> The <code>while True:</code> statement creates an infinite loop. When the user enters digits, <code>salary.isdigit()</code> evaluates to <code>True</code>, executing the <code>break</code> statement which exits the loop immediately. Other choices either run only when salary is already digits, exit when input is NOT digits, or don't terminate properly.</p>"
+            },
+            {
+                scenario: "You declare a global variable <code>base_salary = 40000</code>. Inside a function <code>calculate_payroll()</code>, you attempt to modify it: <pre>base_salary = 40000\n\ndef calculate_payroll():\n    base_salary += 5000\n    return base_salary</pre> When you call <code>calculate_payroll()</code>, what happens?",
+                question: "What is the runtime result of this code in Python?",
+                options: [
+                    "It returns 45000 and updates the global base_salary to 45000.",
+                    "It returns 45000 but the global base_salary remains 40000.",
+                    "It raises an UnboundLocalError.",
+                    "It returns None."
+                ],
+                correctIndex: 2,
+                explanation: "<p><strong>Why this is correct:</strong> Inside a function, if you assign to a variable (including compound assignments like <code>+=</code>), Python treats it as a local variable. Since <code>base_salary</code> has not been defined locally yet when <code>base_salary += 5000</code> is evaluated, it raises an <code>UnboundLocalError</code>. To resolve this, you must declare <code>global base_salary</code> first.</p>"
+            },
+            {
+                scenario: "You define a payroll calculation function with default parameter values: <pre>def calculate_pay(salary, bonus=1000, tax=0.1):</pre> You wish to execute this function with custom parameters.",
+                question: "Which of the following function calls will raise a SyntaxError in Python?",
+                options: [
+                    "calculate_pay(50000, tax=0.15)",
+                    "calculate_pay(salary=50000, 2000)",
+                    "calculate_pay(50000, 2000, 0.12)",
+                    "calculate_pay(50000)"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> In Python syntax, positional arguments cannot appear after keyword arguments in a function call. In <code>calculate_pay(salary=50000, 2000)</code>, the positional argument <code>2000</code> follows the keyword argument <code>salary=50000</code>, which triggers a <code>SyntaxError</code>.</p>"
+            },
+            {
+                scenario: "You define an Employee class with a class attribute: <pre>class Employee:\n    company = \"RetailMax\"\n    def __init__(self, name):\n        self.name = name</pre> You create two instances: <code>e1 = Employee(\"Rahul\")</code> and <code>e2 = Employee(\"Priya\")</code>. Then, you execute <code>Employee.company = \"RetailMax India\"</code>.",
+                question: "What are the values of e1.company and e2.company after the modification?",
+                options: [
+                    "Both remain \"RetailMax\"",
+                    "Both change to \"RetailMax India\"",
+                    "e1.company changes to \"RetailMax India\" but e2.company remains \"RetailMax\"",
+                    "It raises an AttributeError"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> Class attributes (defined directly in the class body) are shared among all instances of a class. Modifying the attribute directly on the class (<code>Employee.company</code>) updates the value for all instances that access this attribute.</p>"
+            },
+            {
+                scenario: "You want to verify if an object <code>emp</code> belongs to class <code>Manager</code> or any subclass derived from it.",
+                question: "Which built-in Python function should you use to check this?",
+                options: [
+                    "isinstance(emp, Manager)",
+                    "type(emp) == Manager",
+                    "emp.is_class(Manager)",
+                    "issubclass(emp, Manager)"
+                ],
+                correctIndex: 0,
+                explanation: "<p><strong>Why this is correct:</strong> <code>isinstance(object, classinfo)</code> checks if an object is an instance of the class or any subclass of it. Direct type comparisons (e.g. <code>type(emp) == Manager</code>) return <code>False</code> for subclasses (like <code>Director</code>), which is bad OOP design.</p>"
+            },
+            {
+                scenario: "In your requests connection script, you want to guarantee that a network socket or file resource is closed, regardless of whether the HTTP request completes successfully or throws an connection error.",
+                question: "What is the standard pythonic construct to ensure cleanup code runs in all circumstances?",
+                options: [
+                    "Place the cleanup code inside the try block right after the request.",
+                    "Place the cleanup code inside the finally block.",
+                    "Duplicate the cleanup code in both the try and except blocks.",
+                    "Place the cleanup code in the except block."
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> Code inside the <code>finally</code> block is guaranteed to execute whether an exception is raised or not, and even if a <code>return</code> statement is hit. This makes it the ideal place for resource cleanup.</p>"
+            },
+            {
+                scenario: "You have a list of dictionary records: <code>employees = [{\"name\": \"Rahul\", \"active\": True}, {\"name\": \"Priya\", \"active\": False}, {\"name\": \"Amit\", \"active\": True}]</code>. You want to extract the names of active employees only.",
+                question: "Which list comprehension correctly filters the names?",
+                options: [
+                    "[emp[\"name\"] for emp in employees if emp[\"active\"]]",
+                    "[emp[\"name\"] if emp[\"active\"] for emp in employees]",
+                    "[for emp in employees if emp[\"active\"]: emp[\"name\"]]",
+                    "[emp.name for emp in employees if emp.active == True]"
+                ],
+                correctIndex: 0,
+                explanation: "<p><strong>Why this is correct:</strong> The correct syntax for filtering in a list comprehension is: <code>[expression for item in iterable if condition]</code>. Syntaxes with inline <code>if-else</code> expressions require an <code>else</code>, and dot access <code>emp.name</code> fails because employees are dictionaries, not object instances.</p>"
+            },
+            {
+                scenario: "You want to retrieve the value of an optional key <code>\"skills\"</code> from an employee dict. If the key doesn't exist, you want it to safely evaluate to an empty list <code>[]</code> rather than raising a KeyError.",
+                question: "Which python dictionary method performs this operation?",
+                options: [
+                    "emp_dict[\"skills\"] or []",
+                    "emp_dict.get(\"skills\", [])",
+                    "emp_dict.pop(\"skills\", [])",
+                    "emp_dict.setdefault(\"skills\", [])"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> The <code>dict.get(key, default)</code> method retrieves the key's value if it is present. If the key is missing, it returns the specified default value without throwing a KeyError or modifying the dictionary.</p>"
+            },
+            {
+                scenario: "In your input validation logic, you want to enforce that salaries are positive numbers. If a negative value is passed, you want to raise a standard exception with a descriptive warning message.",
+                question: "What is the correct syntax to raise a ValueError in Python?",
+                options: [
+                    "throw ValueError(\"Salary cannot be negative\")",
+                    "raise ValueError(\"Salary cannot be negative\")",
+                    "raise Exception.ValueError(\"Salary cannot be negative\")",
+                    "ValueError.raise(\"Salary cannot be negative\")"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> Python uses the keyword <code>raise</code> to trigger exceptions, followed by the exception constructor. Keywords like <code>throw</code> are used in other languages like C++, Java, and JavaScript, but are invalid in Python.</p>"
+            },
+            {
+                scenario: "You want to sync a new employee dictionary to an external web API using a POST request. The API endpoint expects a JSON-formatted payload body.",
+                question: "Which requests call correctly sends the dictionary serialized as JSON?",
+                options: [
+                    "requests.post(url, data=employee_dict)",
+                    "requests.post(url, json=employee_dict)",
+                    "requests.post(url, params=employee_dict)",
+                    "requests.post(url, headers=employee_dict)"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> When you pass a dictionary to the <code>json=</code> parameter of <code>requests.post</code>, the library automatically serializes it to a JSON string and sets the <code>Content-Type</code> header to <code>application/json</code>. Using <code>data=</code> sends it as URL-encoded form data by default.</p>"
+            },
+            {
+                scenario: "You have a menu loop inside a CLI application: <pre>while True:\n    choice = input(\"Enter choice: \")\n    # ... handle choices ...</pre> The exit choice is \"8\". You want to immediately terminate the loop when the user enters \"8\".",
+                question: "Which statement should be executed when choice == \"8\" to exit the loop?",
+                options: [
+                    "break",
+                    "continue",
+                    "pass",
+                    "return"
+                ],
+                correctIndex: 0,
+                explanation: "<p><strong>Why this is correct:</strong> The <code>break</code> statement immediately terminates the loop execution and jumps to the first statement outside it. <code>continue</code> skips the rest of the current iteration, and <code>pass</code> does nothing.</p>"
             }
         ];
 
@@ -966,15 +1119,15 @@ except:
             let badge = "";
             let desc = "";
             
-            if (score === 5) {
+            if (score === questions.length) {
                 badge = "Chief Architect / Python Lead";
                 desc = `Outstanding job, ${username}! You demonstrated perfect knowledge of core Python syntax, OOP, error handlers, and requests structure. RetailMax HR systems are in exceptionally safe hands.`;
-            } else if (score >= 3) {
+            } else if (score >= questions.length * 0.7) {
                 badge = "Senior Systems Engineer";
-                desc = `Great job, ${username}. You have a very solid understanding of pythonic conventions and object models. You're ready to start building version 2.0 applications.`;
+                desc = `Great job, ${username}. You have a very solid understanding of pythonic conventions and object models. You scored ${score}/${questions.length} and are ready to start building version 2.0 applications.`;
             } else {
                 badge = "Junior Systems Associate";
-                desc = `You scored ${score}/5. Review the specific feedback on syntax and class declarations to build up confidence for the next database sprint.`;
+                desc = `You scored ${score}/${questions.length}. Review the specific feedback on syntax and class declarations to build up confidence for the next database sprint.`;
             }
             
             badgeTitle.textContent = badge;
