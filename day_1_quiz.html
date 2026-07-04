@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RetailMax HR System - Day 1 Interactive Quiz</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0b0f19 0%, #111827 50%, #1e1b4b 100%);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-hover-bg: rgba(255, 255, 255, 0.07);
+            --glass-hover-border: rgba(255, 255, 255, 0.15);
+            
+            --color-primary: #6366f1; /* Indigo */
+            --color-primary-glow: rgba(99, 102, 241, 0.4);
+            --color-secondary: #06b6d4; /* Cyan */
+            --color-secondary-glow: rgba(6, 182, 212, 0.4);
+            --color-success: #10b981; /* Emerald */
+            --color-error: #ef4444; /* Rose/Red */
+            --color-warning: #f59e0b; /* Amber */
+            
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --text-bright: #ffffff;
+            
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        /* Ambient glowing background shapes */
+        .ambient-glow-1 {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--color-primary-glow) 0%, transparent 70%);
+            top: -100px;
+            left: -100px;
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(40px);
+        }
+
+        .ambient-glow-2 {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--color-secondary-glow) 0%, transparent 70%);
+            bottom: -150px;
+            right: -100px;
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(40px);
+        }
+
+        /* Container */
+        .quiz-container {
+            width: 100%;
+            max-width: 750px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            position: relative;
+            z-index: 1;
+            transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+            box-shadow: 0 0 10px var(--color-primary);
+        }
+
+        /* Header Styling */
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .quiz-badge {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--color-secondary);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .quiz-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--text-bright), #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .quiz-subtitle {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        /* Welcome screen */
+        .welcome-screen {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .welcome-icon {
+            font-size: 4.5rem;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .input-group {
+            margin: 25px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .input-label {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .username-input {
+            width: 100%;
+            max-width: 320px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 14px 20px;
+            font-family: inherit;
+            font-size: 1rem;
+            color: var(--text-bright);
+            text-align: center;
+            transition: all var(--transition-speed);
+            outline: none;
+        }
+
+        .username-input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Custom Buttons */
+        .btn {
+            background: linear-gradient(90deg, var(--color-primary) 0%, #4f46e5 100%);
+            color: var(--text-bright);
+            border: none;
+            padding: 14px 36px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+            background: linear-gradient(90deg, #4f46e5 0%, var(--color-primary) 100%);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Question Screen */
+        .question-screen {
+            display: none;
+        }
+
+        .scenario-box {
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 4px solid var(--color-secondary);
+            padding: 20px;
+            border-radius: 0 16px 16px 0;
+            margin-bottom: 25px;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        .scenario-box strong {
+            color: var(--color-secondary);
+            display: block;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: var(--text-bright);
+            line-height: 1.4;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 30px;
+        }
+
+        .option-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-card:hover {
+            background: var(--glass-hover-bg);
+            border-color: var(--glass-hover-border);
+            transform: translateX(4px);
+        }
+
+        .option-radio {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--text-muted);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .option-card.selected .option-radio {
+            border-color: var(--color-primary);
+            background: var(--color-primary);
+        }
+
+        .option-card.selected .option-radio::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .option-text {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--text-main);
+        }
+
+        .option-text pre {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px 14px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-top: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Option validation states */
+        .option-card.correct {
+            border-color: var(--color-success);
+            background: rgba(16, 185, 129, 0.08);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
+        }
+
+        .option-card.correct .option-radio {
+            border-color: var(--color-success);
+            background: var(--color-success);
+        }
+
+        .option-card.correct .option-radio::after {
+            content: '✓';
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .option-card.incorrect {
+            border-color: var(--color-error);
+            background: rgba(239, 68, 68, 0.08);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.1);
+        }
+
+        .option-card.incorrect .option-radio {
+            border-color: var(--color-error);
+            background: var(--color-error);
+        }
+
+        .option-card.incorrect .option-radio::after {
+            content: '✗';
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        /* Explanations */
+        .explanation-box {
+            display: none;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 25px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .explanation-header {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .explanation-header.correct-text {
+            color: var(--color-success);
+        }
+
+        .explanation-header.incorrect-text {
+            color: var(--color-error);
+        }
+
+        .explanation-desc {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
+
+        .explanation-desc p {
+            margin-bottom: 10px;
+        }
+
+        /* Result Screen */
+        .result-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .score-circle-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 30px auto;
+        }
+
+        .score-svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .score-track {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.05);
+            stroke-width: 10;
+        }
+
+        .score-fill {
+            fill: none;
+            stroke: url(#scoreGrad);
+            stroke-width: 10;
+            stroke-linecap: round;
+            stroke-dasharray: 440;
+            stroke-dashoffset: 440;
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .score-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .score-val {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-bright);
+            line-height: 1;
+        }
+
+        .score-total {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        .badge-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--color-secondary);
+        }
+
+        .badge-desc {
+            font-size: 1rem;
+            color: var(--text-muted);
+            max-width: 480px;
+            margin: 0 auto 30px auto;
+            line-height: 1.5;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer Controls */
+        .footer-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 25px;
+            margin-top: 25px;
+        }
+
+        .question-number {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border: 1px solid var(--glass-border);
+            padding: 10px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all var(--transition-speed);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: var(--text-bright);
+        }
+
+        /* Review Section */
+        .review-section {
+            text-align: left;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 30px;
+        }
+
+        .review-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-bright);
+        }
+
+        .review-card {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .review-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .status-pill {
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pill.correct {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+        }
+
+        .status-pill.incorrect {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-error);
+        }
+
+        .review-q-text {
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: var(--text-bright);
+            margin-bottom: 12px;
+        }
+
+        .review-ans-row {
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .review-ans-row span {
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+
+    <div class="quiz-container" id="quizContainer">
+        <!-- Progress Bar -->
+        <div class="progress-container" id="progressContainer" style="display: none;">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- Quiz Header -->
+        <div class="quiz-header" id="quizHeader">
+            <span class="quiz-badge">RetailMax Academy</span>
+            <h1 class="quiz-title">Day 1 Scenario-Based Quiz</h1>
+            <p class="quiz-subtitle" id="quizSubtitle">Validate your Python foundational knowledge through enterprise scenarios.</p>
+        </div>
+
+        <!-- WELCOME SCREEN -->
+        <div class="welcome-screen" id="welcomeScreen">
+            <span class="welcome-icon">🚀</span>
+            <p style="font-size: 1.1rem; line-height: 1.6; max-width: 500px; margin: 0 auto 20px auto; color: var(--text-muted);">
+                Welcome to Sprint 1 validation. Put yourself in the shoes of a newly hired Software Engineer at RetailMax and solve issues concerning data structures, math parsing, object classes, error controls, and external integrations.
+            </p>
+            <div class="input-group">
+                <label for="usernameInput" class="input-label">Enter your name to begin:</label>
+                <input type="text" id="usernameInput" class="username-input" placeholder="e.g. Himanshu" value="Himanshu">
+            </div>
+            <button class="btn" id="startBtn">
+                Start Sprint Validation
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+        </div>
+
+        <!-- QUESTION SCREEN -->
+        <div class="question-screen" id="questionScreen">
+            <div class="scenario-box" id="scenarioBox">
+                <strong>Scenario:</strong>
+                <span id="scenarioText">Loading scenario...</span>
+            </div>
+            <div class="question-text" id="questionText">Loading question...</div>
+            
+            <div class="options-list" id="optionsList">
+                <!-- Dynamically filled -->
+            </div>
+
+            <!-- Explanation box (revealed on submit) -->
+            <div class="explanation-box" id="explanationBox">
+                <div class="explanation-header" id="explanationHeader"></div>
+                <div class="explanation-desc" id="explanationDesc"></div>
+            </div>
+
+            <!-- Footer Controls -->
+            <div class="footer-controls">
+                <span class="question-number" id="questionNumber">Question 1 of 5</span>
+                <button class="btn" id="actionBtn" disabled>Check Answer</button>
+            </div>
+        </div>
+
+        <!-- RESULTS SCREEN -->
+        <div class="result-screen" id="resultScreen">
+            <div class="score-circle-container">
+                <svg class="score-svg" viewBox="0 0 160 160">
+                    <defs>
+                        <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="var(--color-primary)" />
+                            <stop offset="100%" stop-color="var(--color-secondary)" />
+                        </linearGradient>
+                    </defs>
+                    <circle class="score-track" cx="80" cy="80" r="70" />
+                    <circle class="score-fill" id="scoreFill" cx="80" cy="80" r="70" />
+                </svg>
+                <div class="score-text">
+                    <span class="score-val" id="scoreVal">0</span>
+                    <span class="score-total" id="scoreTotal">/5</span>
+                </div>
+            </div>
+
+            <h2 class="badge-title" id="badgeTitle">Evaluation Loading...</h2>
+            <p class="badge-desc" id="badgeDesc">Analyzing your answers...</p>
+
+            <button class="btn" id="restartBtn">
+                Try Quiz Again
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            </button>
+
+            <!-- Detailed Review Drawers -->
+            <div class="review-section" id="reviewSection">
+                <h3 class="review-title">Sprint Summary & Review</h3>
+                <div id="reviewList">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Questions Database
+        const questions = [
+            {
+                scenario: "You are setting up the initial profile variables for a new RetailMax employee. HR wants to record the employee ID, their precise hourly wage, and their contractor status. Which variable assignments match standard python naming conventions and appropriate primitive data types?",
+                question: "Which of the following variable setups is pythonic and correct?",
+                options: [
+                    "employee-id = 1001\\nhourly_wage = \\\"45.50\\\"\\nisContractor = true",
+                    "employee_id = 1001\\nhourly_wage = 45.50\\nis_contractor = True",
+                    "EmployeeID = 1001\\nhourlywage = 45.5\\nis_contractor = 1",
+                    "1001 = employee_id\\nhourly_wage = 45,50\\nis_contractor = \\\"YES\\\""
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> Python uses <code>snake_case</code> (all letters lowercase, separated by underscores) for variables. Boolean values are strict keywords in Python and must be capitalized: <code>True</code> or <code>False</code> (not lowercase <code>true</code> or integer <code>1</code>).</p><p>Using a string for hourly wage makes mathematical operations difficult, and variable names cannot start with numbers (e.g. <code>1001 = employee_id</code> is invalid syntax).</p>"
+            },
+            {
+                scenario: "You are writing a script to compute the annual bonus using input text boxes from the HR GUI. The script reads monthly salary from the input box as a string. You write: <pre>annual_bonus = monthly_salary * (bonus_percentage / 100)</pre> If HR enters <code>\\\"75000\\\"</code> as the monthly salary and <code>10</code> as the bonus percentage, what will happen?",
+                question: "What is the result of executing this arithmetic operation in Python?",
+                options: [
+                    "The expression returns 7500.0 successfully.",
+                    "The expression prints the text \\\"75000\\\" ten times.",
+                    "It raises a TypeError because you cannot multiply a string by a float.",
+                    "The expression returns 750000.0."
+                ],
+                correctIndex: 2,
+                explanation: "<p><strong>Why this is correct:</strong> In Python, division <code>10 / 100</code> yields a float (<code>0.1</code>). The variable <code>monthly_salary</code> holds a string <code>\\\"75000\\\"</code>. In Python, trying to multiply a string by a float raises a <code>TypeError</code>.</p><p>To fix this, you must cast the string input to a numeric type first: <code>float(monthly_salary) * (bonus_percentage / 100)</code>.</p>"
+            },
+            {
+                scenario: "You are designing the class hierarchy for the HR system. You have a base class <code>Employee</code>. You need to create a subclass <code>Manager</code> that inherits from <code>Employee</code> and introduces an additional instance attribute <code>subordinates</code> (a list of other employees).",
+                question: "What is the correct way to declare the class and initialize the parent class attributes?",
+                options: [
+                    `<pre>class Manager(Employee):
+    def __init__(self, name, salary, subordinates):
+        super().__init__(name, salary)
+        self.subordinates = subordinates</pre>`,
+                    `<pre>class Manager extends Employee:
+    def __init__(self, name, salary, subordinates):
+        Employee.__init__(name, salary)
+        self.subordinates = subordinates</pre>`,
+                    `<pre>class Manager(Employee):
+    def __init__(self, name, salary, subordinates):
+        self.name = name
+        self.salary = salary
+        self.subordinates = subordinates</pre>`,
+                    `<pre>class Manager:
+    def __init__(self, name, salary, subordinates):
+        parent = Employee(name, salary)
+        self.subordinates = subordinates</pre>`
+                ],
+                correctIndex: 0,
+                explanation: "<p><strong>Why this is correct:</strong> Python uses parenthesis to declare inheritance: <code>class Manager(Employee):</code>. The function <code>super().__init__(name, salary)</code> refers to the parent constructor and initializes the attributes defined in the <code>Employee</code> class properly.</p><p>Python does not use the keyword <code>extends</code> (which is Java/JS syntax), and bypassing the parent constructor duplicates logic and breaks class inheritance design principles.</p>"
+            },
+            {
+                scenario: "You are reading raw employee lists from a text-based report. Some lines contain incomplete values or typos in the salary column (e.g. 'CONFIDENTIAL' instead of numbers). This triggers a <code>ValueError</code> when parsing with <code>float()</code>. You want to skip these lines, print a warning, and keep reading the other lines.",
+                question: "Which code structure correctly handles the exception without crashing the entire import loop?",
+                options: [
+                    `<pre>try:
+    salary = float(row[3])
+except ValueError:
+    print("Warning: Skipping invalid row")
+    continue</pre>`,
+                    `<pre>try:
+    salary = float(row[3])
+catch ValueError:
+    print("Warning: Skipping invalid row")
+    pass</pre>`,
+                    `<pre>if type(row[3]) == float:
+    salary = row[3]
+else:
+    print("Skipping")</pre>`,
+                    `<pre>try:
+    salary = float(row[3])
+except:
+    exit()</pre>`
+                ],
+                correctIndex: 0,
+                explanation: "<p><strong>Why this is correct:</strong> Python handles errors with <code>try...except ExceptionType:</code> blocks. Placing a <code>continue</code> statement inside the <code>except</code> block of a loop will skip the rest of the current iteration and move to the next row.</p><p>Using <code>catch</code> is a syntax error (it is not a Python keyword). In option 3, <code>type(row[3]) == float</code> will always be false because CSV cells are read as string objects. In option 4, calling <code>exit()</code> immediately terminates the entire program run instead of continuing the loop.</p>"
+            },
+            {
+                scenario: "Your HR application syncs employee profile badges from a centralized REST API endpoint using the <code>requests</code> library. If the server is offline or returns a <code>404 Not Found</code> error, you want to log the error status code rather than loading incomplete data.",
+                question: "Which of the following is the standard, safest way to verify the response code before accessing data?",
+                options: [
+                    "if response.json() == None:",
+                    "if response.status_code == 200:",
+                    "if response.text == \\\"404\\\":",
+                    "if response.raise_for_status() == True:"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> Checking <code>response.status_code == 200</code> ensures that the web request returned HTTP Status 200 OK. Trying to access <code>response.json()</code> on a failed request can raise a <code>requests.exceptions.JSONDecodeError</code> because the server returned an HTML error page or empty text.</p><p>The function <code>response.raise_for_status()</code> raises an exception directly if the code is not 200 OK (it does not return a boolean <code>True/False</code>), and <code>response.text</code> contains the entire response body, not just the status code string.</p>"
+            }
+        ];
+
+        // State variables
+        let username = "";
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOptionIndex = null;
+        let isAnswerChecked = false;
+        let userAnswers = []; // Records user performance
+
+        // DOM elements
+        const welcomeScreen = document.getElementById("welcomeScreen");
+        const questionScreen = document.getElementById("questionScreen");
+        const resultScreen = document.getElementById("resultScreen");
+        const progressContainer = document.getElementById("progressContainer");
+        const progressBar = document.getElementById("progressBar");
+        
+        const usernameInput = document.getElementById("usernameInput");
+        const startBtn = document.getElementById("startBtn");
+        const quizSubtitle = document.getElementById("quizSubtitle");
+        
+        const scenarioText = document.getElementById("scenarioText");
+        const questionText = document.getElementById("questionText");
+        const optionsList = document.getElementById("optionsList");
+        
+        const explanationBox = document.getElementById("explanationBox");
+        const explanationHeader = document.getElementById("explanationHeader");
+        const explanationDesc = document.getElementById("explanationDesc");
+        
+        const questionNumber = document.getElementById("questionNumber");
+        const actionBtn = document.getElementById("actionBtn");
+        const restartBtn = document.getElementById("restartBtn");
+        
+        const scoreVal = document.getElementById("scoreVal");
+        const scoreFill = document.getElementById("scoreFill");
+        const badgeTitle = document.getElementById("badgeTitle");
+        const badgeDesc = document.getElementById("badgeDesc");
+        const reviewList = document.getElementById("reviewList");
+
+        // Start button handler
+        startBtn.addEventListener("click", () => {
+            username = usernameInput.value.trim() || "Candidate";
+            welcomeScreen.style.display = "none";
+            questionScreen.style.display = "block";
+            progressContainer.style.display = "block";
+            
+            quizSubtitle.textContent = `Welcome ${username}! Solve these scenarios to complete your Sprint 1 validation.`;
+            
+            loadQuestion(0);
+        });
+
+        // Load question at index
+        function loadQuestion(index) {
+            currentQuestionIndex = index;
+            selectedOptionIndex = null;
+            isAnswerChecked = false;
+            
+            const q = questions[index];
+            
+            // Progress Bar
+            const percent = ((index) / questions.length) * 100;
+            progressBar.style.width = `${percent}%`;
+            
+            // Hide explanation
+            explanationBox.style.display = "none";
+            
+            // Populate content
+            scenarioText.innerHTML = q.scenario;
+            questionText.textContent = q.question;
+            questionNumber.textContent = `Question ${index + 1} of ${questions.length}`;
+            
+            // Action button setup
+            actionBtn.textContent = "Check Answer";
+            actionBtn.disabled = true;
+            
+            // Build options
+            optionsList.innerHTML = "";
+            q.options.forEach((optText, optIdx) => {
+                const card = document.createElement("div");
+                card.className = "option-card";
+                card.id = `option-${optIdx}`;
+                card.innerHTML = `
+                    <div class="option-radio"></div>
+                    <div class="option-text">${optText}</div>
+                `;
+                
+                card.addEventListener("click", () => {
+                    if (isAnswerChecked) return;
+                    selectOption(optIdx);
+                });
+                
+                optionsList.appendChild(card);
+            });
+        }
+
+        // Handle option selection
+        function selectOption(idx) {
+            selectedOptionIndex = idx;
+            actionBtn.disabled = false;
+            
+            // Highlight selected option
+            document.querySelectorAll(".option-card").forEach((card, cIdx) => {
+                if (cIdx === idx) {
+                    card.classList.add("selected");
+                } else {
+                    card.classList.remove("selected");
+                }
+            });
+        }
+
+        // Action button click handler
+        actionBtn.addEventListener("click", () => {
+            if (!isAnswerChecked) {
+                checkAnswer();
+            } else {
+                nextQuestion();
+            }
+        });
+
+        // Check selected answer
+        function checkAnswer() {
+            isAnswerChecked = true;
+            const q = questions[currentQuestionIndex];
+            const isCorrect = (selectedOptionIndex === q.correctIndex);
+            
+            // Record answer for final summary
+            userAnswers.push({
+                questionIndex: currentQuestionIndex,
+                selected: selectedOptionIndex,
+                correct: q.correctIndex,
+                isCorrect: isCorrect
+            });
+
+            if (isCorrect) {
+                score++;
+                explanationHeader.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Correct Answer!
+                `;
+                explanationHeader.className = "explanation-header correct-text";
+            } else {
+                explanationHeader.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    Incorrect Answer
+                `;
+                explanationHeader.className = "explanation-header incorrect-text";
+            }
+            
+            explanationDesc.innerHTML = q.explanation;
+            explanationBox.style.display = "block";
+            
+            // Style options based on validation
+            document.querySelectorAll(".option-card").forEach((card, cIdx) => {
+                if (cIdx === q.correctIndex) {
+                    card.classList.add("correct");
+                } else if (cIdx === selectedOptionIndex) {
+                    card.classList.add("incorrect");
+                }
+                // Disable further transitions
+                card.style.cursor = "default";
+            });
+            
+            // Update button label
+            if (currentQuestionIndex < questions.length - 1) {
+                actionBtn.textContent = "Next Question";
+            } else {
+                actionBtn.textContent = "Show Final Results";
+            }
+        }
+
+        // Load next question or show results
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                loadQuestion(currentQuestionIndex + 1);
+            } else {
+                showResults();
+            }
+        }
+
+        // Show final results screen
+        function showResults() {
+            questionScreen.style.display = "none";
+            resultScreen.style.display = "block";
+            progressBar.style.width = "100%";
+            
+            // Set circle progress animation
+            const circumference = 2 * Math.PI * 70; // 439.8
+            const offset = circumference - (score / questions.length) * circumference;
+            scoreFill.style.strokeDasharray = circumference;
+            
+            // Trigger animation frame delay
+            setTimeout(() => {
+                scoreFill.style.strokeDashoffset = offset;
+            }, 100);
+            
+            scoreVal.textContent = score;
+            
+            // Badges evaluations
+            let badge = "";
+            let desc = "";
+            
+            if (score === 5) {
+                badge = "Chief Architect / Python Lead";
+                desc = `Outstanding job, ${username}! You demonstrated perfect knowledge of core Python syntax, OOP, error handlers, and requests structure. RetailMax HR systems are in exceptionally safe hands.`;
+            } else if (score >= 3) {
+                badge = "Senior Systems Engineer";
+                desc = `Great job, ${username}. You have a very solid understanding of pythonic conventions and object models. You're ready to start building version 2.0 applications.`;
+            } else {
+                badge = "Junior Systems Associate";
+                desc = `You scored ${score}/5. Review the specific feedback on syntax and class declarations to build up confidence for the next database sprint.`;
+            }
+            
+            badgeTitle.textContent = badge;
+            badgeDesc.textContent = desc;
+            
+            // Build Review Drawer list
+            reviewList.innerHTML = "";
+            userAnswers.forEach((ans) => {
+                const q = questions[ans.questionIndex];
+                const card = document.createElement("div");
+                card.className = "review-card";
+                card.innerHTML = `
+                    <div class="review-card-header">
+                        <span>Scenario ${ans.questionIndex + 1}</span>
+                        <span class="status-pill ${ans.isCorrect ? 'correct' : 'incorrect'}">
+                            ${ans.isCorrect ? 'Correct' : 'Incorrect'}
+                        </span>
+                    </div>
+                    <div class="review-q-text">${q.question}</div>
+                    <div class="review-ans-row">
+                        <span>Your selection:</span> 
+                        <pre style="font-family: 'Fira Code', monospace; font-size: 0.85rem; background: rgba(0,0,0,0.2); padding: 6px; border-radius: 6px; overflow-x: auto; margin-top: 4px;">${q.options[ans.selected]}</pre>
+                    </div>
+                    ${!ans.isCorrect ? `
+                    <div class="review-ans-row" style="margin-top: 8px; color: var(--color-success);">
+                        <span>Correct answer:</span> 
+                        <pre style="font-family: 'Fira Code', monospace; font-size: 0.85rem; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.1); padding: 6px; border-radius: 6px; overflow-x: auto; margin-top: 4px;">${q.options[ans.correct]}</pre>
+                    </div>` : ''}
+                    <div style="margin-top: 12px; font-size: 0.9rem; color: var(--text-muted); line-height: 1.4;">
+                        ${q.explanation}
+                    </div>
+                `;
+                reviewList.appendChild(card);
+            });
+        }
+
+        // Restart quiz handler
+        restartBtn.addEventListener("click", () => {
+            score = 0;
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            
+            resultScreen.style.display = "none";
+            questionScreen.style.display = "block";
+            
+            // Reset stroke fill
+            scoreFill.style.strokeDashoffset = 440;
+            
+            loadQuestion(0);
+        });
+    </script>
+</body>
+</html>
