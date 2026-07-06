@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RetailMax HR System - Day 2 Interactive Quiz</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0b0f19 0%, #111827 50%, #1e1b4b 100%);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-hover-bg: rgba(255, 255, 255, 0.07);
+            --glass-hover-border: rgba(255, 255, 255, 0.15);
+            
+            --color-primary: #6366f1; /* Indigo */
+            --color-primary-glow: rgba(99, 102, 241, 0.4);
+            --color-secondary: #06b6d4; /* Cyan */
+            --color-secondary-glow: rgba(6, 182, 212, 0.4);
+            --color-success: #10b981; /* Emerald */
+            --color-error: #ef4444; /* Rose/Red */
+            --color-warning: #f59e0b; /* Amber */
+            
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --text-bright: #ffffff;
+            
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        /* Ambient glowing background shapes */
+        .ambient-glow-1 {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--color-primary-glow) 0%, transparent 70%);
+            top: -100px;
+            left: -100px;
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(40px);
+        }
+
+        .ambient-glow-2 {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--color-secondary-glow) 0%, transparent 70%);
+            bottom: -150px;
+            right: -100px;
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(40px);
+        }
+
+        /* Container */
+        .quiz-container {
+            width: 100%;
+            max-width: 750px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            position: relative;
+            z-index: 1;
+            transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+            box-shadow: 0 0 10px var(--color-primary);
+        }
+
+        /* Header Styling */
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .quiz-badge {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--color-secondary);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .quiz-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--text-bright), #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .quiz-subtitle {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        /* Welcome screen */
+        .welcome-screen {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .welcome-icon {
+            font-size: 4.5rem;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .input-group {
+            margin: 25px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .input-label {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .username-input {
+            width: 100%;
+            max-width: 320px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 14px 20px;
+            font-family: inherit;
+            font-size: 1rem;
+            color: var(--text-bright);
+            text-align: center;
+            transition: all var(--transition-speed);
+            outline: none;
+        }
+
+        .username-input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Custom Buttons */
+        .btn {
+            background: linear-gradient(90deg, var(--color-primary) 0%, #4f46e5 100%);
+            color: var(--text-bright);
+            border: none;
+            padding: 14px 36px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+            background: linear-gradient(90deg, #4f46e5 0%, var(--color-primary) 100%);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Question Screen */
+        .question-screen {
+            display: none;
+        }
+
+        .scenario-box {
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 4px solid var(--color-secondary);
+            padding: 20px;
+            border-radius: 0 16px 16px 0;
+            margin-bottom: 25px;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        .scenario-box strong {
+            color: var(--color-secondary);
+            display: block;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: var(--text-bright);
+            line-height: 1.4;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 30px;
+        }
+
+        .option-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-card:hover {
+            background: var(--glass-hover-bg);
+            border-color: var(--glass-hover-border);
+            transform: translateX(4px);
+        }
+
+        .option-radio {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--text-muted);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .option-card.selected .option-radio {
+            border-color: var(--color-primary);
+            background: var(--color-primary);
+        }
+
+        .option-card.selected .option-radio::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .option-text {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--text-main);
+            width: 100%;
+        }
+
+        .option-text pre {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px 14px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-top: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Option validation states */
+        .option-card.correct {
+            border-color: var(--color-success);
+            background: rgba(16, 185, 129, 0.08);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
+        }
+
+        .option-card.correct .option-radio {
+            border-color: var(--color-success);
+            background: var(--color-success);
+        }
+
+        .option-card.correct .option-radio::after {
+            content: '✓';
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .option-card.incorrect {
+            border-color: var(--color-error);
+            background: rgba(239, 68, 68, 0.08);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.1);
+        }
+
+        .option-card.incorrect .option-radio {
+            border-color: var(--color-error);
+            background: var(--color-error);
+        }
+
+        .option-card.incorrect .option-radio::after {
+            content: '✗';
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        /* Explanations */
+        .explanation-box {
+            display: none;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 25px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .explanation-header {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .explanation-header.correct-text {
+            color: var(--color-success);
+        }
+
+        .explanation-header.incorrect-text {
+            color: var(--color-error);
+        }
+
+        .explanation-desc {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
+
+        .explanation-desc p {
+            margin-bottom: 10px;
+        }
+
+        /* Result Screen */
+        .result-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .score-circle-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 30px auto;
+        }
+
+        .score-svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .score-track {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.05);
+            stroke-width: 10;
+        }
+
+        .score-fill {
+            fill: none;
+            stroke: url(#scoreGrad);
+            stroke-width: 10;
+            stroke-linecap: round;
+            stroke-dasharray: 440;
+            stroke-dashoffset: 440;
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .score-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .score-val {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-bright);
+            line-height: 1;
+        }
+
+        .score-total {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        .badge-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--color-secondary);
+        }
+
+        .badge-desc {
+            font-size: 1rem;
+            color: var(--text-muted);
+            max-width: 480px;
+            margin: 0 auto 30px auto;
+            line-height: 1.5;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer Controls */
+        .footer-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 25px;
+            margin-top: 25px;
+        }
+
+        .question-number {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border: 1px solid var(--glass-border);
+            padding: 10px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all var(--transition-speed);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: var(--text-bright);
+        }
+
+        /* Review Section */
+        .review-section {
+            text-align: left;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 30px;
+        }
+
+        .review-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-bright);
+        }
+
+        .review-card {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .review-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .status-pill {
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pill.correct {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+        }
+
+        .status-pill.incorrect {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-error);
+        }
+
+        .review-q-text {
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: var(--text-bright);
+            margin-bottom: 12px;
+        }
+
+        .review-ans-row {
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .review-ans-row span {
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+
+    <div class="quiz-container" id="quizContainer">
+        <!-- Progress Bar -->
+        <div class="progress-container" id="progressContainer" style="display: none;">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- Quiz Header -->
+        <div class="quiz-header" id="quizHeader">
+            <span class="quiz-badge">Day 2: File & CSV Operations</span>
+            <h1 class="quiz-title">Day 2 Scenario-Based Quiz</h1>
+            <p class="quiz-subtitle" id="quizSubtitle">Validate your Python File I/O and CSV Database management skills through enterprise scenarios.</p>
+        </div>
+
+        <!-- WELCOME SCREEN -->
+        <div class="welcome-screen" id="welcomeScreen">
+            <span class="welcome-icon">💾</span>
+            <p style="font-size: 1.1rem; line-height: 1.6; max-width: 500px; margin: 0 auto 20px auto; color: var(--text-muted);">
+                Welcome to Sprint 2 validation. Put yourself in the shoes of a newly hired Systems Engineer at RetailMax and solve issues concerning directory verification, CSV parsing, data type casting, search filtering, and CRUD operations on the employee file database.
+            </p>
+            <div class="input-group">
+                <label for="usernameInput" class="input-label">Enter your name to begin:</label>
+                <input type="text" id="usernameInput" class="username-input" placeholder="e.g. Himanshu" value="Himanshu">
+            </div>
+            <button class="btn" id="startBtn">
+                Start Sprint Validation
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+        </div>
+
+        <!-- QUESTION SCREEN -->
+        <div class="question-screen" id="questionScreen">
+            <div class="scenario-box" id="scenarioBox">
+                <strong>Scenario:</strong>
+                <span id="scenarioText">Loading scenario...</span>
+            </div>
+            <div class="question-text" id="questionText">Loading question...</div>
+            
+            <div class="options-list" id="optionsList">
+                <!-- Dynamically filled -->
+            </div>
+
+            <!-- Explanation box (revealed on submit) -->
+            <div class="explanation-box" id="explanationBox">
+                <div class="explanation-header" id="explanationHeader"></div>
+                <div class="explanation-desc" id="explanationDesc"></div>
+            </div>
+
+            <!-- Footer Controls -->
+            <div class="footer-controls">
+                <span class="question-number" id="questionNumber">Question 1 of 20</span>
+                <button class="btn" id="actionBtn" disabled>Check Answer</button>
+            </div>
+        </div>
+
+        <!-- RESULTS SCREEN -->
+        <div class="result-screen" id="resultScreen">
+            <div class="score-circle-container">
+                <svg class="score-svg" viewBox="0 0 160 160">
+                    <defs>
+                        <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="var(--color-primary)" />
+                            <stop offset="100%" stop-color="var(--color-secondary)" />
+                        </linearGradient>
+                    </defs>
+                    <circle class="score-track" cx="80" cy="80" r="70" />
+                    <circle class="score-fill" id="scoreFill" cx="80" cy="80" r="70" />
+                </svg>
+                <div class="score-text">
+                    <span class="score-val" id="scoreVal">0</span>
+                    <span class="score-total" id="scoreTotal">/20</span>
+                </div>
+            </div>
+
+            <h2 class="badge-title" id="badgeTitle">Evaluation Loading...</h2>
+            <p class="badge-desc" id="badgeDesc">Analyzing your answers...</p>
+
+            <button class="btn" id="restartBtn">
+                Try Quiz Again
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            </button>
+
+            <!-- Detailed Review Drawers -->
+            <div class="review-section" id="reviewSection">
+                <h3 class="review-title">Sprint Summary & Review</h3>
+                <div id="reviewList">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Questions Database
+        const questions = [
+            {
+                scenario: "You are verifying the working directory of the RetailMax HR Automation script to ensure it reads the database from the correct folder. You run:<br><pre style=\"font-family: 'Fira Code', monospace; font-size: 0.9rem; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 8px;\">import os\ncurrent_path = os.getcwd()</pre>",
+                question: "What does os.getcwd() return in Python?",
+                options: [
+                    "The absolute path of the directory containing the Python executable.",
+                    "The absolute path of the directory from which the script was executed (current working directory).",
+                    "The relative path of the script file itself.",
+                    "The user's operating system home directory path."
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> <code>os.getcwd()</code> returns the <strong>Current Working Directory</strong> as a string. This represents the directory from which the process was started, and is the base path used by Python when resolving relative file paths (like <code>\"employees.csv\"</code>).</p>"
+            },
+            {
+                scenario: "You want to check if the database file <code>\"employees.csv\"</code> exists in the current working directory before trying to open it, in order to prevent a <code>FileNotFoundError</code>.",
+                question: "Which expression correctly checks if the file exists using the standard os library?",
+                options: [
+                    "if os.path.exists(\"employees.csv\"):",
+                    "if os.file_exists(\"employees.csv\"):",
+                    "if os.path.check(\"employees.csv\"):",
+                    "if os.path.is_file(\"employees.csv\"):"
+                ],
+                correctIndex: 0,
+                explanation: "<p><strong>Why this is correct:</strong> The <code>os.path.exists(path)</code> function returns <code>True</code> if the file or directory exists at the specified path, and <code>False</code> otherwise. Functions like <code>file_exists</code> or <code>check</code> do not exist in the <code>os</code> module, and while <code>os.path.isfile()</code> exists, <code>os.path.is_file()</code> is invalid.</p>"
+            },
+            {
+                scenario: "You need to log the exact location of the database file on the server. You want to convert the relative filename <code>\"employees.csv\"</code> to its full absolute system path.",
+                question: "Which function should you call to retrieve the absolute path?",
+                options: [
+                    "os.path.full_path(\"employees.csv\")",
+                    "os.path.abspath(\"employees.csv\")",
+                    "os.path.resolve(\"employees.csv\")",
+                    "os.path.real_path(\"employees.csv\")"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> <code>os.path.abspath(path)</code> resolves the relative path into a fully qualified absolute path starting from the root of the file system, combining it with the current working directory. <code>full_path</code> is not a valid Python function in the <code>os</code> library.</p>"
+            },
+            {
+                scenario: "If the <code>\"employees.csv\"</code> database file is missing, trying to open it in read mode (<code>\"r\"</code>) will cause the program to crash. You want to catch this specific error to print a clear notification rather than a full traceback.",
+                question: "Which specific built-in Python exception class should you catch in your except block?",
+                options: [
+                    "IOError",
+                    "FileNotFoundError",
+                    "PathError",
+                    "KeyError"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> Python raises a <code>FileNotFoundError</code> (a subclass of <code>OSError</code> and <code>IOError</code>) when a file system read operation is attempted on a file path that does not exist. Catching this specific exception is recommended for robust error handling.</p>"
+            },
+            {
+                scenario: "You are setting up the CSV parser to read employee records. You open the file and create a reader object:<br><pre style=\"font-family: 'Fira Code', monospace; font-size: 0.9rem; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 8px;\">import csv\nwith open(\"employees.csv\", \"r\") as file:\n    reader = csv.reader(file)</pre>",
+                question: "What data type is each row yielded by the reader object when you iterate over it?",
+                options: [
+                    "A dictionary where column headers are keys.",
+                    "A list of strings representing the columns in that row.",
+                    "A single string representing the raw line from the file.",
+                    "A tuple containing data automatically cast to float/int."
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> The <code>csv.reader</code> parses each line of the CSV file and returns it as a <strong>list of strings</strong>, where each string corresponds to a cell/column value in that row. It does not perform automatic type conversion.</p>"
+            },
+            {
+                scenario: "You read a CSV file as a list of raw rows using the following code:<br><pre style=\"font-family: 'Fira Code', monospace; font-size: 0.9rem; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 8px;\">with open(\"employees.csv\", \"r\") as file:\n    reader = csv.reader(file)\n    rows = list(reader)</pre>The first row is a header containing column names: <code>['ID', 'Name', 'Department', 'Salary']</code>, followed by several rows of employee data.",
+                question: "How do you calculate the correct number of employee records in the list?",
+                options: [
+                    "employee_count = len(rows)",
+                    "employee_count = len(rows) - 1",
+                    "employee_count = rows.count()",
+                    "employee_count = len(rows) + 1"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> Since <code>rows</code> is a list containing all lines parsed from the CSV, including the header line, the total number of actual employee records is the length of the list minus 1 (i.e., <code>len(rows) - 1</code>).</p>"
+            },
+            {
+                scenario: "You are printing a directory table. To format the columns with proper alignments, you write:<br><pre style=\"font-family: 'Fira Code', monospace; font-size: 0.9rem; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 8px;\">print(f\"{row[0]:&lt;10}{row[1]:&lt;25}{row[3]:&gt;10}\")</pre>",
+                question: "What do the format specifiers :<10, :<25, and :>10 mean?",
+                options: [
+                    "Left-align within 10 characters, left-align within 25 characters, and right-align within 10 characters.",
+                    "Crop text to 10 characters, 25 characters, and 10 characters respectively.",
+                    "Add less-than 10 spaces, less-than 25 spaces, and greater-than 10 spaces.",
+                    "Set container margins to 10px, 25px, and 10px respectively."
+                ],
+                correctIndex: 0,
+                explanation: "<p><strong>Why this is correct:</strong> In Python f-string format specifiers, <code>&lt;</code> forces left-alignment and <code>&gt;</code> forces right-alignment, with the number specifying the minimum field width. Therefore, the first two fields are left-aligned, and the last field is right-aligned.</p>"
+            },
+            {
+                scenario: "Your employee CSV database stores fields in the order: <code>ID, Name, Department, Salary</code>. You want to extract and display the department value for a row list.",
+                question: "Which index should you use to access the department column from a row list returned by csv.reader?",
+                options: [
+                    "row[3]",
+                    "row[1]",
+                    "row[2]",
+                    "row[\"Department\"]"
+                ],
+                correctIndex: 2,
+                explanation: "<p><strong>Why this is correct:</strong> Python lists are 0-indexed. With columns ordered as <code>ID (0), Name (1), Department (2), Salary (3)</code>, the department is at index <code>2</code>. Accessing it via a string key like <code>row[\"Department\"]</code> will raise a <code>TypeError</code> since lists only support integer indexing.</p>"
+            },
+            {
+                scenario: "You are searching for employees in a given department. To ensure the search works whether the user types \"sales\", \"Sales\", or \"SALES\", you implement:<br><pre style=\"font-family: 'Fira Code', monospace; font-size: 0.9rem; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 8px;\">if row[2].lower() == department.lower():</pre>",
+                question: "Why is this technique used for the search comparison?",
+                options: [
+                    "It forces Python to convert the file on disk to lowercase characters.",
+                    "It performs a case-insensitive check by converting both strings to lowercase before comparing.",
+                    "It verifies if the department string is formatted in camelCase.",
+                    "It speeds up the string search matching index."
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> The <code>.lower()</code> string method returns a copy of the string in all lowercase. Converting both the record's department value and the user's input to lowercase before comparing them allows case-insensitive matching, so variations like 'Sales' or 'sales' match successfully.</p>"
+            },
+            {
+                scenario: "You write a script to calculate the average salary from the CSV database. When iterating through <code>row</code> in <code>reader</code>, you attempt to do:<br><pre style=\"font-family: 'Fira Code', monospace; font-size: 0.9rem; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 8px;\">total_salary += row[3]</pre>",
+                question: "What runtime issue will occur with this addition, and how do you fix it?",
+                options: [
+                    "It works perfectly because Python dynamically casts CSV values.",
+                    "It raises a TypeError because CSV values are read as strings, and you must cast it: int(row[3]).",
+                    "It raises a ValueError because salaries have decimals and must be formatted using .format().",
+                    "It concatenates the numbers as strings instead of adding them, yielding no error but wrong results."
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> The <code>csv.reader</code> parses all values from a file as string data types. Attempting to add a string to a numeric variable (e.g. <code>total_salary</code> initialized to 0) raises a <code>TypeError</code>. To resolve this, you must cast the string to an integer or float using <code>int(row[3])</code> or <code>float(row[3])</code>.</p>"
+            },
+            {
+                scenario: "You write a function to calculate the average salary of employees. If the CSV file is empty or contains no records (e.g. after initialization), the count of employees is 0. If you perform <code>average = total_salary / employee_count</code>, what happens?",
+                question: "What exception is raised on dividing by zero, and what is the best practice to prevent it?",
+                options: [
+                    "ArithmeticError; handle it with a try/except ArithmeticError block.",
+                    "ZeroDivisionError; check if employee_count > 0 before performing the division.",
+                    "ValueError; cast the denominator to float first.",
+                    "NullPointerException; initialize average to None."
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> In Python, division by zero raises a <code>ZeroDivisionError</code>. While exception handling can catch it, checking if the count is greater than zero beforehand (<code>if employee_count > 0:</code>) is the standard and cleanest way to avoid this error.</p>"
+            },
+            {
+                scenario: "To delete an employee record from the CSV database, you need to filter out the row matching the <code>delete_id</code>. Since Python does not allow direct middle-file deletions easily, you write a script to handle it.",
+                question: "What is the correct and standard pythonic pattern to implement this deletion?",
+                options: [
+                    "Open the file in \"r+\" mode, find the row, delete it from the stream, and save.",
+                    "Read all rows into memory, copy all rows except the matching one to a list, then overwrite the CSV file with the updated list.",
+                    "Call the built-in function csv.delete(filename, delete_id).",
+                    "Use os.remove(delete_id) directly on the file path."
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> Standard file systems do not support deleting lines in the middle of a file directly. The standard way is to read the file, filter the lines in memory (adding only non-matching lines to a new list), and write the updated list back to overwrite the file in write mode (<code>\"w\"</code>).</p>"
+            },
+            {
+                scenario: "When saving the updated list of employees back to <code>\"employees.csv\"</code> after performing a deletion or department transfer, you open the file.",
+                question: "Which file mode and parameter arguments should you use to completely overwrite the file with clean line endings?",
+                options: [
+                    "open(filename, \"a\", newline=\"\")",
+                    "open(filename, \"w\", newline=\"\")",
+                    "open(filename, \"r+\", newline=\"\\n\")",
+                    "open(filename, \"wb\")"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> The <code>\"w\"</code> mode completely overwrites/truncates the target file. Specifying the <code>newline=\"\"</code> argument is a recommended best practice for the <code>csv</code> module on Windows/Linux to prevent double blank lines/carriage return issues from being written between rows.</p>"
+            },
+            {
+                scenario: "When writing CSV files on Windows, if you do not specify <code>newline=\"\"</code> in the <code>open()</code> function, you will see a blank line written after every row in the file.",
+                question: "Why does this double-newline issue occur on Windows?",
+                options: [
+                    "The csv.writer writes \\r\\n (CRLF) row endings, and Windows text-mode translation adds an extra \\r carriage return.",
+                    "The CSV file is corrupted and needs to be rebuilt with standard encoding.",
+                    "Python's default print statements append extra line endings to file streams.",
+                    "The CSV writer requires a custom delimiter to handle space separation."
+                ],
+                correctIndex: 0,
+                explanation: "<p><strong>Why this is correct:</strong> The <code>csv.writer</code> handles line endings internally and writes <code>\\r\\n</code> characters. In Windows, opening a file in default text mode converts <code>\\n</code> to <code>\\r\\n</code>, leading to <code>\\r\\r\\n</code> being written, which is interpreted as a blank line. Specifying <code>newline=\"\"</code> disables this text-mode translation.</p>"
+            },
+            {
+                scenario: "You want to transfer an employee with a specific ID to a new department. You read the CSV records into memory as lists of rows.",
+                question: "How do you update the department (which is the third column, index 2) for the matched row before writing it back?",
+                options: [
+                    "row[2] = new_department",
+                    "row.update({\"department\": new_department})",
+                    "row.replace(row[2], new_department)",
+                    "row.insert(2, new_department)"
+                ],
+                correctIndex: 0,
+                explanation: "<p><strong>Why this is correct:</strong> A row read by <code>csv.reader</code> is represented as a list of strings. Since list items are mutable, you can modify any element directly by its index, i.e., <code>row[2] = new_department</code>. Dictionaries use `.update()`, strings use `.replace()`, and `.insert()` inserts a new item rather than modifying an existing one.</p>"
+            },
+            {
+                scenario: "You want to backup a row before editing it. You write: <code>original_row = row</code>. You then update <code>row[2] = \"HR\"</code>. When you print <code>original_row</code>, you notice that the department in <code>original_row</code> has also changed to <code>\"HR\"</code>.",
+                question: "Why did original_row get modified, and how should you make a safe independent copy of the row list?",
+                options: [
+                    "Lists are immutable in Python; you must use: original_row = tuple(row).",
+                    "Assignment creates a reference to the same list object; use: original_row = row.copy() to make a shallow copy.",
+                    "The row variable is global; use the local keyword inside the loop.",
+                    "Python caches list assignments automatically; you must run del row first."
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> In Python, assignment (<code>=</code>) does not clone objects; it binds the name to the existing object. Because lists are mutable, modifying <code>row</code> updates the object in place, which is also referenced by <code>original_row</code>. Using <code>row.copy()</code> (or list slicing <code>row[:]</code>) creates a new list object containing the same elements.</p>"
+            },
+            {
+                scenario: "You have accumulated a list of all updated records in memory: <code>updated_rows = [ ['1001', 'Rahul', 'Sales', '65000'], ['1002', 'Priya', 'HR', '72000'] ]</code>. You want to write all of these rows to the CSV file at once.",
+                question: "Which csv.writer method should you call to write this list of rows?",
+                options: [
+                    "writer.writerow(updated_rows)",
+                    "writer.writerows(updated_rows)",
+                    "writer.write_all(updated_rows)",
+                    "writer.save(updated_rows)"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> The <code>writer.writerows(row_iterable)</code> method takes a list or iterable of rows and writes them all to the CSV file. The <code>writerow()</code> method takes a single row (list) and writes it, which would write nested brackets if passed a list of lists.</p>"
+            },
+            {
+                scenario: "Some employees have names containing non-ASCII characters (e.g. Müller or Sardana). When reading or writing the CSV file, you want to prevent encoding/decoding errors across different operating systems.",
+                question: "What parameter should you add to open() to enforce the universal character encoding standard?",
+                options: [
+                    "encoding=\"ascii\"",
+                    "encoding=\"utf-8\"",
+                    "encoding=\"latin-1\"",
+                    "encoding=\"system\""
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> Specifying <code>encoding=\"utf-8\"</code> ensures that the file is read and written using the UTF-8 encoding standard, which supports all Unicode characters. This prevents <code>UnicodeDecodeError</code> or <code>UnicodeEncodeError</code> when running the code on different OS platforms with differing default system encodings.</p>"
+            },
+            {
+                scenario: "You are writing a search feature. You loop through the CSV rows. If you find the employee, you print their details. If the employee is not found in the entire file, you want to display \"Employee Not Found\".",
+                question: "What is the standard and clear way to handle the \"Not Found\" condition?",
+                options: [
+                    "Rely on the IndexError thrown when the loop finishes.",
+                    "Use a boolean flag found = False initialized before the loop, set it to True on match, and check if not found after the loop.",
+                    "Check if row is None after the loop has completed.",
+                    "Use a while loop that counts from 1 to len(rows) and checks if index equals length."
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> Using a boolean flag (e.g. <code>found = False</code>) initialized before the search loop, setting it to <code>True</code> when a match is found, and checking it after the loop is a standard and robust pattern for handling conditions that depend on search completion.</p>"
+            },
+            {
+                scenario: "You write code to read employee records: <code>file = open(\"employees.csv\", \"r\")</code>, process the data, and then call <code>file.close()</code>. If an exception occurs while processing, <code>file.close()</code> is never called, leaving the file descriptor open in the operating system.",
+                question: "What is the standard pythonic statement that guarantees files are properly closed even if exceptions occur?",
+                options: [
+                    "Use the try...catch block with an explicit close() in every block.",
+                    "Use the with statement context manager (e.g., with open(...) as file:).",
+                    "Run os.close(\"employees.csv\") after the script ends.",
+                    "Set file = None to trigger automatic garbage collection."
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> The <code>with</code> statement creates a context manager that automatically handles opening and closing files. Even if an exception occurs inside the block, the file descriptor is guaranteed to be closed upon exiting the block, preventing resource leaks.</p>"
+            }
+        ];
+
+        // State variables
+        let username = "";
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOptionIndex = null;
+        let isAnswerChecked = false;
+        let userAnswers = []; // Records user performance
+
+        // DOM elements
+        const welcomeScreen = document.getElementById("welcomeScreen");
+        const questionScreen = document.getElementById("questionScreen");
+        const resultScreen = document.getElementById("resultScreen");
+        const progressContainer = document.getElementById("progressContainer");
+        const progressBar = document.getElementById("progressBar");
+        
+        const usernameInput = document.getElementById("usernameInput");
+        const startBtn = document.getElementById("startBtn");
+        const quizSubtitle = document.getElementById("quizSubtitle");
+        
+        const scenarioText = document.getElementById("scenarioText");
+        const questionText = document.getElementById("questionText");
+        const optionsList = document.getElementById("optionsList");
+        
+        const explanationBox = document.getElementById("explanationBox");
+        const explanationHeader = document.getElementById("explanationHeader");
+        const explanationDesc = document.getElementById("explanationDesc");
+        
+        const questionNumber = document.getElementById("questionNumber");
+        const actionBtn = document.getElementById("actionBtn");
+        const restartBtn = document.getElementById("restartBtn");
+        
+        const scoreVal = document.getElementById("scoreVal");
+        const scoreTotal = document.getElementById("scoreTotal");
+        const scoreFill = document.getElementById("scoreFill");
+        const badgeTitle = document.getElementById("badgeTitle");
+        const badgeDesc = document.getElementById("badgeDesc");
+        const reviewList = document.getElementById("reviewList");
+
+        // Start button handler
+        startBtn.addEventListener("click", () => {
+            username = usernameInput.value.trim() || "Candidate";
+            welcomeScreen.style.display = "none";
+            questionScreen.style.display = "block";
+            progressContainer.style.display = "block";
+            
+            quizSubtitle.textContent = `Welcome ${username}! Solve these scenarios to complete your Sprint 2 validation.`;
+            scoreTotal.textContent = "/" + questions.length;
+            
+            loadQuestion(0);
+        });
+
+        // Load question at index
+        function loadQuestion(index) {
+            currentQuestionIndex = index;
+            selectedOptionIndex = null;
+            isAnswerChecked = false;
+            
+            const q = questions[index];
+            
+            // Progress Bar
+            const percent = ((index) / questions.length) * 100;
+            progressBar.style.width = `${percent}%`;
+            
+            // Hide explanation
+            explanationBox.style.display = "none";
+            
+            // Populate content
+            scenarioText.innerHTML = q.scenario;
+            questionText.textContent = q.question;
+            questionNumber.textContent = `Question ${index + 1} of ${questions.length}`;
+            
+            // Action button setup
+            actionBtn.textContent = "Check Answer";
+            actionBtn.disabled = true;
+            
+            // Build options
+            optionsList.innerHTML = "";
+            q.options.forEach((optText, optIdx) => {
+                const card = document.createElement("div");
+                card.className = "option-card";
+                card.id = `option-${optIdx}`;
+                card.innerHTML = `
+                    <div class="option-radio"></div>
+                    <div class="option-text">${optText}</div>
+                `;
+                
+                card.addEventListener("click", () => {
+                    if (isAnswerChecked) return;
+                    selectOption(optIdx);
+                });
+                
+                optionsList.appendChild(card);
+            });
+        }
+
+        // Handle option selection
+        function selectOption(idx) {
+            selectedOptionIndex = idx;
+            actionBtn.disabled = false;
+            
+            // Highlight selected option
+            document.querySelectorAll(".option-card").forEach((card, cIdx) => {
+                if (cIdx === idx) {
+                    card.classList.add("selected");
+                } else {
+                    card.classList.remove("selected");
+                }
+            });
+        }
+
+        // Action button click handler
+        actionBtn.addEventListener("click", () => {
+            if (!isAnswerChecked) {
+                checkAnswer();
+            } else {
+                nextQuestion();
+            }
+        });
+
+        // Check selected answer
+        function checkAnswer() {
+            isAnswerChecked = true;
+            const q = questions[currentQuestionIndex];
+            const isCorrect = (selectedOptionIndex === q.correctIndex);
+            
+            // Record answer for final summary
+            userAnswers.push({
+                questionIndex: currentQuestionIndex,
+                selected: selectedOptionIndex,
+                correct: q.correctIndex,
+                isCorrect: isCorrect
+            });
+
+            if (isCorrect) {
+                score++;
+                explanationHeader.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Correct Answer!
+                `;
+                explanationHeader.className = "explanation-header correct-text";
+            } else {
+                explanationHeader.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    Incorrect Answer
+                `;
+                explanationHeader.className = "explanation-header incorrect-text";
+            }
+            
+            explanationDesc.innerHTML = q.explanation;
+            explanationBox.style.display = "block";
+            
+            // Style options based on validation
+            document.querySelectorAll(".option-card").forEach((card, cIdx) => {
+                if (cIdx === q.correctIndex) {
+                    card.classList.add("correct");
+                } else if (cIdx === selectedOptionIndex) {
+                    card.classList.add("incorrect");
+                }
+                // Disable further transitions
+                card.style.cursor = "default";
+            });
+            
+            // Update button label
+            if (currentQuestionIndex < questions.length - 1) {
+                actionBtn.textContent = "Next Question";
+            } else {
+                actionBtn.textContent = "Show Final Results";
+            }
+        }
+
+        // Load next question or show results
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                loadQuestion(currentQuestionIndex + 1);
+            } else {
+                showResults();
+            }
+        }
+
+        // Show final results screen
+        function showResults() {
+            questionScreen.style.display = "none";
+            resultScreen.style.display = "block";
+            progressBar.style.width = "100%";
+            
+            // Set circle progress animation
+            const circumference = 2 * Math.PI * 70; // 439.8
+            const offset = circumference - (score / questions.length) * circumference;
+            scoreFill.style.strokeDasharray = circumference;
+            
+            // Trigger animation frame delay
+            setTimeout(() => {
+                scoreFill.style.strokeDashoffset = offset;
+            }, 100);
+            
+            scoreVal.textContent = score;
+            
+            // Badges evaluations
+            let badge = "";
+            let desc = "";
+            
+            if (score === questions.length) {
+                badge = "Enterprise Database Administrator";
+                desc = `Outstanding job, ${username}! You demonstrated perfect knowledge of working directories, path manipulation, file presence checks, and custom CSV row-level filtering and updates. The RetailMax database is in exceptionally safe hands.`;
+            } else if (score >= questions.length * 0.7) {
+                badge = "Data Systems Engineer";
+                desc = `Great job, ${username}. You have a very solid understanding of the 'os' module, CSV stream reading/writing, and case-insensitive record searches. You scored ${score}/${questions.length} and are ready to manage HR system data pipelines.`;
+            } else {
+                badge = "Associate File Specialist";
+                desc = `You scored ${score}/${questions.length}. Review the specific feedback on CSV reading, file modes, and data casting to build up confidence for the next backend sprint.`;
+            }
+            
+            badgeTitle.textContent = badge;
+            badgeDesc.textContent = desc;
+            
+            // Build Review Drawer list
+            reviewList.innerHTML = "";
+            userAnswers.forEach((ans) => {
+                const q = questions[ans.questionIndex];
+                const card = document.createElement("div");
+                card.className = "review-card";
+                card.innerHTML = `
+                    <div class="review-card-header">
+                        <span>Scenario ${ans.questionIndex + 1}</span>
+                        <span class="status-pill ${ans.isCorrect ? 'correct' : 'incorrect'}">
+                            ${ans.isCorrect ? 'Correct' : 'Incorrect'}
+                        </span>
+                    </div>
+                    <div class="review-q-text">${q.question}</div>
+                    <div class="review-ans-row">
+                        <span>Your selection:</span> 
+                        <pre style="font-family: 'Fira Code', monospace; font-size: 0.85rem; background: rgba(0,0,0,0.2); padding: 6px; border-radius: 6px; overflow-x: auto; margin-top: 4px;">${q.options[ans.selected]}</pre>
+                    </div>
+                    ${!ans.isCorrect ? `
+                    <div class="review-ans-row" style="margin-top: 8px; color: var(--color-success);">
+                        <span>Correct answer:</span> 
+                        <pre style="font-family: 'Fira Code', monospace; font-size: 0.85rem; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.1); padding: 6px; border-radius: 6px; overflow-x: auto; margin-top: 4px;">${q.options[ans.correct]}</pre>
+                    </div>` : ''}
+                    <div style="margin-top: 12px; font-size: 0.9rem; color: var(--text-muted); line-height: 1.4;">
+                        ${q.explanation}
+                    </div>
+                `;
+                reviewList.appendChild(card);
+            });
+        }
+
+        // Restart quiz handler
+        restartBtn.addEventListener("click", () => {
+            score = 0;
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            
+            resultScreen.style.display = "none";
+            questionScreen.style.display = "block";
+            
+            // Reset stroke fill
+            scoreFill.style.strokeDashoffset = 440;
+            
+            loadQuestion(0);
+        });
+    </script>
+</body>
+</html>
