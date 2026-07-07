@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RetailMax HR System - Day 3 Interactive Quiz</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0b0f19 0%, #111827 50%, #1e1b4b 100%);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-hover-bg: rgba(255, 255, 255, 0.07);
+            --glass-hover-border: rgba(255, 255, 255, 0.15);
+            
+            --color-primary: #6366f1; /* Indigo */
+            --color-primary-glow: rgba(99, 102, 241, 0.4);
+            --color-secondary: #06b6d4; /* Cyan */
+            --color-secondary-glow: rgba(6, 182, 212, 0.4);
+            --color-success: #10b981; /* Emerald */
+            --color-error: #ef4444; /* Rose/Red */
+            --color-warning: #f59e0b; /* Amber */
+            
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --text-bright: #ffffff;
+            
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        /* Ambient glowing background shapes */
+        .ambient-glow-1 {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--color-primary-glow) 0%, transparent 70%);
+            top: -100px;
+            left: -100px;
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(40px);
+        }
+
+        .ambient-glow-2 {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--color-secondary-glow) 0%, transparent 70%);
+            bottom: -150px;
+            right: -100px;
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(40px);
+        }
+
+        /* Container */
+        .quiz-container {
+            width: 100%;
+            max-width: 750px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            position: relative;
+            z-index: 1;
+            transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+            box-shadow: 0 0 10px var(--color-primary);
+        }
+
+        /* Header Styling */
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .quiz-badge {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--color-secondary);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .quiz-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--text-bright), #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .quiz-subtitle {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        /* Welcome screen */
+        .welcome-screen {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .welcome-icon {
+            font-size: 4.5rem;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .input-group {
+            margin: 25px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .input-label {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .username-input {
+            width: 100%;
+            max-width: 320px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 14px 20px;
+            font-family: inherit;
+            font-size: 1rem;
+            color: var(--text-bright);
+            text-align: center;
+            transition: all var(--transition-speed);
+            outline: none;
+        }
+
+        .username-input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Custom Buttons */
+        .btn {
+            background: linear-gradient(90deg, var(--color-primary) 0%, #4f46e5 100%);
+            color: var(--text-bright);
+            border: none;
+            padding: 14px 36px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+            background: linear-gradient(90deg, #4f46e5 0%, var(--color-primary) 100%);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Question Screen */
+        .question-screen {
+            display: none;
+        }
+
+        .scenario-box {
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 4px solid var(--color-secondary);
+            padding: 20px;
+            border-radius: 0 16px 16px 0;
+            margin-bottom: 25px;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        .scenario-box strong {
+            color: var(--color-secondary);
+            display: block;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: var(--text-bright);
+            line-height: 1.4;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 30px;
+        }
+
+        .option-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 16px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-card:hover {
+            background: var(--glass-hover-bg);
+            border-color: var(--glass-hover-border);
+            transform: translateX(4px);
+        }
+
+        .option-radio {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--text-muted);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .option-card.selected .option-radio {
+            border-color: var(--color-primary);
+            background: var(--color-primary);
+        }
+
+        .option-card.selected .option-radio::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .option-text {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--text-main);
+            width: 100%;
+        }
+
+        .option-text pre {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 10px 14px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-top: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Option validation states */
+        .option-card.correct {
+            border-color: var(--color-success);
+            background: rgba(16, 185, 129, 0.08);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
+        }
+
+        .option-card.correct .option-radio {
+            border-color: var(--color-success);
+            background: var(--color-success);
+        }
+
+        .option-card.correct .option-radio::after {
+            content: '✓';
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .option-card.incorrect {
+            border-color: var(--color-error);
+            background: rgba(239, 68, 68, 0.08);
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.1);
+        }
+
+        .option-card.incorrect .option-radio {
+            border-color: var(--color-error);
+            background: var(--color-error);
+        }
+
+        .option-card.incorrect .option-radio::after {
+            content: '✗';
+            color: white;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        /* Explanations */
+        .explanation-box {
+            display: none;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 25px;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .explanation-header {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .explanation-header.correct-text {
+            color: var(--color-success);
+        }
+
+        .explanation-header.incorrect-text {
+            color: var(--color-error);
+        }
+
+        .explanation-desc {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
+
+        .explanation-desc p {
+            margin-bottom: 10px;
+        }
+
+        /* Result Screen */
+        .result-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .score-circle-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 30px auto;
+        }
+
+        .score-svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .score-track {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.05);
+            stroke-width: 10;
+        }
+
+        .score-fill {
+            fill: none;
+            stroke: url(#scoreGrad);
+            stroke-width: 10;
+            stroke-linecap: round;
+            stroke-dasharray: 440;
+            stroke-dashoffset: 440;
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .score-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .score-val {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-bright);
+            line-height: 1;
+        }
+
+        .score-total {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        .badge-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--color-secondary);
+        }
+
+        .badge-desc {
+            font-size: 1rem;
+            color: var(--text-muted);
+            max-width: 480px;
+            margin: 0 auto 30px auto;
+            line-height: 1.5;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer Controls */
+        .footer-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 25px;
+            margin-top: 25px;
+        }
+
+        .question-number {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border: 1px solid var(--glass-border);
+            padding: 10px 24px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all var(--transition-speed);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: var(--text-bright);
+        }
+
+        /* Review Section */
+        .review-section {
+            text-align: left;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 30px;
+        }
+
+        .review-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-bright);
+        }
+
+        .review-card {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .review-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .status-pill {
+            padding: 4px 10px;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pill.correct {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+        }
+
+        .status-pill.incorrect {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-error);
+        }
+
+        .review-q-text {
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: var(--text-bright);
+            margin-bottom: 12px;
+        }
+
+        .review-ans-row {
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+            line-height: 1.4;
+        }
+
+        .review-ans-row span {
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+
+    <div class="quiz-container" id="quizContainer">
+        <!-- Progress Bar -->
+        <div class="progress-container" id="progressContainer" style="display: none;">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- Quiz Header -->
+        <div class="quiz-header" id="quizHeader">
+            <span class="quiz-badge">Day 3: SQL & Database Migration</span>
+            <h1 class="quiz-title">Day 3 Scenario-Based Quiz</h1>
+            <p class="quiz-subtitle" id="quizSubtitle">Validate your Python SQLite database administration and CSV migration skills through enterprise scenarios.</p>
+        </div>
+
+        <!-- WELCOME SCREEN -->
+        <div class="welcome-screen" id="welcomeScreen">
+            <span class="welcome-icon">🗄️</span>
+            <p style="font-size: 1.1rem; line-height: 1.6; max-width: 500px; margin: 0 auto 20px auto; color: var(--text-muted);">
+                Welcome to Sprint 3 validation. Put yourself in the shoes of a newly hired Systems Engineer at RetailMax and solve issues concerning SQLite connections, schema constraints, CSV to SQL migrations, parameterized query structures, error safety, aggregate metrics, and database transaction rollbacks.
+            </p>
+            <div class="input-group">
+                <label for="usernameInput" class="input-label">Enter your name to begin:</label>
+                <input type="text" id="usernameInput" class="username-input" placeholder="e.g. Himanshu" value="Himanshu">
+            </div>
+            <button class="btn" id="startBtn">
+                Start Sprint Validation
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+        </div>
+
+        <!-- QUESTION SCREEN -->
+        <div class="question-screen" id="questionScreen">
+            <div class="scenario-box" id="scenarioBox">
+                <strong>Scenario:</strong>
+                <span id="scenarioText">Loading scenario...</span>
+            </div>
+            <div class="question-text" id="questionText">Loading question...</div>
+            
+            <div class="options-list" id="optionsList">
+                <!-- Dynamically filled -->
+            </div>
+
+            <!-- Explanation box (revealed on submit) -->
+            <div class="explanation-box" id="explanationBox">
+                <div class="explanation-header" id="explanationHeader"></div>
+                <div class="explanation-desc" id="explanationDesc"></div>
+            </div>
+
+            <!-- Footer Controls -->
+            <div class="footer-controls">
+                <span class="question-number" id="questionNumber">Question 1 of 20</span>
+                <button class="btn" id="actionBtn" disabled>Check Answer</button>
+            </div>
+        </div>
+
+        <!-- RESULTS SCREEN -->
+        <div class="result-screen" id="resultScreen">
+            <div class="score-circle-container">
+                <svg class="score-svg" viewBox="0 0 160 160">
+                    <defs>
+                        <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="var(--color-primary)" />
+                            <stop offset="100%" stop-color="var(--color-secondary)" />
+                        </linearGradient>
+                    </defs>
+                    <circle class="score-track" cx="80" cy="80" r="70" />
+                    <circle class="score-fill" id="scoreFill" cx="80" cy="80" r="70" />
+                </svg>
+                <div class="score-text">
+                    <span class="score-val" id="scoreVal">0</span>
+                    <span class="score-total" id="scoreTotal">/20</span>
+                </div>
+            </div>
+
+            <h2 class="badge-title" id="badgeTitle">Evaluation Loading...</h2>
+            <p class="badge-desc" id="badgeDesc">Analyzing your answers...</p>
+
+            <button class="btn" id="restartBtn">
+                Try Quiz Again
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            </button>
+
+            <!-- Detailed Review Drawers -->
+            <div class="review-section" id="reviewSection">
+                <h3 class="review-title">Sprint Summary & Review</h3>
+                <div id="reviewList">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Questions Database
+        const questions = [
+            {
+                scenario: "You are implementing the connection logic for the RetailMax HR Automation script to migrate data. You write:<br><pre style=\"font-family: 'Fira Code', monospace; font-size: 0.9rem; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 8px;\">import sqlite3\nconnection = sqlite3.connect(\"retailmax.db\")</pre>",
+                question: "What is the behavior of sqlite3.connect() when the database file \"retailmax.db\" does not exist?",
+                options: [
+                    "It raises a FileNotFoundError exception.",
+                    "It automatically creates the database file in the working directory and establishes a connection.",
+                    "It returns None and writes an error message to stdout.",
+                    "It searches the system path and raises a sqlite3.OperationalError."
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> When calling <code>sqlite3.connect(database)</code>, if the specified file does not exist, SQLite will automatically create the database file in that location and open a database connection to it. No exception is thrown for a missing file.</p>"
+            },
+            {
+                scenario: "After connecting to the database using <code>connection = sqlite3.connect(\"retailmax.db\")</code>, you need to execute SQL statements to build tables and insert records.",
+                question: "Which method must you call on the connection object to obtain a cursor for executing SQL commands?",
+                options: [
+                    "connection.cursor()",
+                    "connection.get_cursor()",
+                    "connection.execute()",
+                    "connection.query()"
+                ],
+                correctIndex: 0,
+                explanation: "<p><strong>Why this is correct:</strong> The <code>connection.cursor()</code> method creates a new Cursor object, which is required to execute SQL statements and fetch results from queries.</p>"
+            },
+            {
+                scenario: "You are defining the SQL schema for your new database: <br><pre style=\"font-family: 'Fira Code', monospace; font-size: 0.9rem; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 8px;\">CREATE TABLE IF NOT EXISTS employees (\n    employee_id INTEGER PRIMARY KEY,\n    name TEXT,\n    department TEXT,\n    designation TEXT,\n    salary REAL\n)</pre>",
+                question: "What is the structural role of designating employee_id as an INTEGER PRIMARY KEY in SQLite?",
+                options: [
+                    "It forces employee_id to accept text strings representing keys.",
+                    "It designates employee_id as a unique identifier for each record, preventing duplicates and automatically mapping it as an alias for SQLite's 64-bit signed integer ROWID.",
+                    "It automatically encrypts the employee ID using standard integer hashes.",
+                    "It automatically increments employee_id by 10 for every new record inserted."
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> In SQLite, specifying a column as <code>INTEGER PRIMARY KEY</code> makes it a unique identifier for the table. It prevents duplicate values (raising an IntegrityError on violations) and acts as a direct alias for the internal ROWID, enabling extremely fast row lookups.</p>"
+            },
+            {
+                scenario: "To ensure that your script can run repeatedly without crashing or attempting to redefine tables, you write: <code>CREATE TABLE IF NOT EXISTS employees (...)</code>.",
+                question: "What is the function of the IF NOT EXISTS clause in this statement?",
+                options: [
+                    "It deletes the table and recreation starts fresh if the table is already present.",
+                    "It raises an OperationalError if the table does not exist.",
+                    "It checks if the database exists on the disk, and if not, raises FileNotFoundError.",
+                    "It silently skips table creation if the table is already present in the database, avoiding errors."
+                ],
+                correctIndex: 3,
+                explanation: "<p><strong>Why this is correct:</strong> The <code>IF NOT EXISTS</code> clause instructs SQLite to only execute the table creation if no table with that name currently exists in the database. If it does exist, SQLite skips the creation silently without raising an error.</p>"
+            },
+            {
+                scenario: "You run an insert statement in your Python code:<br><pre style=\"font-family: 'Fira Code', monospace; font-size: 0.9rem; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 8px;\">cursor.execute(\"INSERT INTO employees VALUES (101, 'Amit', 'IT', 'Engineer', 75000.0)\")</pre>However, when you open the database in another terminal, the record is not there.",
+                question: "Which step did you forget to perform to permanently save this record?",
+                options: [
+                    "Calling connection.save()",
+                    "Calling connection.commit()",
+                    "Calling connection.close()",
+                    "Calling cursor.fetchall()"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> SQLite operates in transactional mode by default. To make modification queries (INSERT, UPDATE, DELETE) permanent and visible to other connections, you must commit the active transaction by calling <code>connection.commit()</code>.</p>"
+            },
+            {
+                scenario: "An engineer builds a search feature by concatenating input directly into the query string:<br><pre style=\"font-family: 'Fira Code', monospace; font-size: 0.9rem; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 8px;\">emp_id = input(\"Enter ID: \")\ncursor.execute(f\"SELECT * FROM employees WHERE employee_id = {emp_id}\")</pre>A code reviewer marks this line as a critical security risk.",
+                question: "What risk does this query present, and what is the standard fix?",
+                options: [
+                    "It causes a recursion leak; fix by adding a try/except block.",
+                    "It permits SQL Injection; fix by using a parameterized query with placeholders: cursor.execute(\"... WHERE employee_id = ?\", (emp_id,)).",
+                    "It exposes the DB passwords; fix by hashing the connection string.",
+                    "It slows down searches; fix by adding index keys."
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> Directly inserting user input into SQL strings via f-strings or concatenation makes the application vulnerable to <strong>SQL Injection</strong>, allowing users to execute unauthorized SQL statements. Parameterized queries separate SQL commands from user data, treating input strictly as literal values.</p>"
+            },
+            {
+                scenario: "You want to find an employee by their ID. You write: <br><pre style=\"font-family: 'Fira Code', monospace; font-size: 0.9rem; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 8px;\">emp_id = '1001'\ncursor.execute(\"SELECT * FROM employees WHERE employee_id = ?\", emp_id)</pre>When you execute the script, Python raises a <code>ProgrammingError: Incorrect number of bindings</code>.",
+                question: "Why did this error occur, and how should you pass the parameter list?",
+                options: [
+                    "The parameter must be passed inside a dictionary.",
+                    "SQLite requires the parameters to be formatted as raw strings.",
+                    "The parameters argument must be an iterable (e.g. tuple or list); you must pass it as a tuple: (emp_id,).",
+                    "You must convert the string '1001' to float first."
+                ],
+                correctIndex: 2,
+                explanation: "<p><strong>Why this is correct:</strong> The second argument to <code>cursor.execute()</code> must be an iterable (like a list or a tuple) representing query bindings. If you pass a string like <code>emp_id = '1001'</code> directly, Python treats it as a sequence of four characters ('1', '0', '0', '1'), resulting in 4 bindings instead of 1. Passing <code>(emp_id,)</code> (a tuple containing a single element) resolves this.</p>"
+            },
+            {
+                scenario: "You are inserting a new employee record. If an employee with that ID already exists, the primary key constraint will be violated, causing the program to raise an exception.",
+                question: "Which exception class in the sqlite3 module should you catch to handle constraint violations?",
+                options: [
+                    "sqlite3.PrimaryKeyError",
+                    "sqlite3.ConstraintError",
+                    "sqlite3.IntegrityError",
+                    "sqlite3.DatabaseError"
+                ],
+                correctIndex: 2,
+                explanation: "<p><strong>Why this is correct:</strong> In Python's <code>sqlite3</code> library, violations of database constraints (such as unique constraints, primary keys, or foreign keys) raise a <code>sqlite3.IntegrityError</code>.</p>"
+            },
+            {
+                scenario: "You run an update statement to modify an employee's salary record:<br><pre style=\"font-family: 'Fira Code', monospace; font-size: 0.9rem; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 8px;\">cursor.execute(\"UPDATE employees SET salary = ? WHERE employee_id = ?\", (new_salary, emp_id))</pre>You want to check if the update was successful (i.e. whether any record matched the given employee ID).",
+                question: "Which cursor property should you inspect to find the number of rows modified by the query?",
+                options: [
+                    "cursor.rowcount",
+                    "cursor.modified",
+                    "cursor.affected",
+                    "cursor.count"
+                ],
+                correctIndex: 0,
+                explanation: "<p><strong>Why this is correct:</strong> The <code>cursor.rowcount</code> property returns the number of rows affected/modified by the last executed SQL statement (e.g. INSERT, UPDATE, DELETE). If no employee with <code>emp_id</code> was found, <code>rowcount</code> will be 0.</p>"
+            },
+            {
+                scenario: "You are executing a query to retrieve a single employee: <code>cursor.execute(\"SELECT * FROM employees WHERE employee_id = ?\", (emp_id,))</code>.",
+                question: "Which cursor method should you use to fetch the record as a single tuple (or None if no matching record is found)?",
+                options: [
+                    "cursor.fetchone()",
+                    "cursor.fetchall()",
+                    "cursor.fetch_row()",
+                    "cursor.first()"
+                ],
+                correctIndex: 0,
+                explanation: "<p><strong>Why this is correct:</strong> <code>cursor.fetchone()</code> retrieves the next single row from the query result set, returning it as a tuple, or <code>None</code> if no more matching rows are available. `fetchall()` returns a list of all matching rows.</p>"
+            },
+            {
+                scenario: "During the database migration from CSV to SQLite, you read rows from `employees.csv`. The legacy CSV has 4 columns (ID, Name, Department, Salary), but the new database has 5 columns (adding Designation). You write:<br><pre style=\"font-family: 'Fira Code', monospace; font-size: 0.9rem; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 8px;\">if len(row) == 4:\n    emp_id, name, dept, salary = row\n    designation = \"Associate\"</pre>",
+                question: "Why is the designation variable assigned a default value of \"Associate\" during migration?",
+                options: [
+                    "To prevent CSV reader from raising a KeyError.",
+                    "It matches the schema requirements of the database by providing a compatible fallback value for records that do not contain designation data.",
+                    "SQLite tables do not support empty string inputs in float fields.",
+                    "It automatically forces designation to be indexable by string names."
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> Since the source CSV file lacks the 'designation' field, migrating it to a database table that expects 5 columns requires providing a default fallback value (like <code>\"Associate\"</code>). This ensures database compatibility and prevents errors during insertion.</p>"
+            },
+            {
+                scenario: "When migrating the 50 CSV records, you want to insert them into the SQL database. If you run the migration script a second time, you want it to skip records that are already present in the database, without raising duplicate key errors.",
+                question: "Which SQLite statement should you use to skip existing records silently during insert?",
+                options: [
+                    "INSERT OR SKIP INTO employees ...",
+                    "INSERT OR IGNORE INTO employees ...",
+                    "INSERT OR BYPASS INTO employees ...",
+                    "INSERT IF UNIQUE INTO employees ..."
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> SQLite supports the <code>INSERT OR IGNORE</code> resolution modifier. If an insertion triggers a constraint conflict (such as attempting to insert an existing primary key ID), the engine silently ignores the conflict and continues with the next insert without throwing an exception.</p>"
+            },
+            {
+                scenario: "You run a SELECT query to retrieve specific fields: <code>cursor.execute(\"SELECT name, salary FROM employees WHERE employee_id = ?\", (emp_id,))</code>. You fetch the record: <code>row = cursor.fetchone()</code>.",
+                question: "How do you access and print the employee's salary value from the row tuple?",
+                options: [
+                    "row[\"salary\"]",
+                    "row[1]",
+                    "row[2]",
+                    "row.salary"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> By default, rows fetched from SQLite are returned as Python tuples. Tuple elements are accessed by integer indices starting at `0`. In `SELECT name, salary`, the index of `name` is `0` and `salary` is `1`.</p>"
+            },
+            {
+                scenario: "You want to compute aggregate statistics on the employees table in SQLite. You write a query to retrieve the number of employees, the average salary, and the highest salary in a single database call.",
+                question: "Which SELECT statement performs these aggregations correctly using built-in SQL functions?",
+                options: [
+                    "SELECT COUNT(*), AVG(salary), MAX(salary) FROM employees",
+                    "SELECT SUM(*), AVERAGE(salary), HIGHEST(salary) FROM employees",
+                    "SELECT COUNT(employees), MEAN(salary), UPPER(salary) FROM employees",
+                    "SELECT TOTAL(*), AVG(salary), HIGHEST(salary) FROM employees"
+                ],
+                correctIndex: 0,
+                explanation: "<p><strong>Why this is correct:</strong> The standard SQL aggregate functions are <code>COUNT()</code>, <code>AVG()</code>, and <code>MAX()</code>. Aggregate functions like <code>AVERAGE</code>, <code>MEAN</code>, or <code>HIGHEST</code> do not exist in standard SQLite.</p>"
+            },
+            {
+                scenario: "HR wants a report listing all employees working in any department that contains the word 'Tech' (e.g. FinTech, Tech Support, Biotech).",
+                question: "Which query uses the correct SQL wildcard matching operator to perform this search?",
+                options: [
+                    "SELECT * FROM employees WHERE department = '%Tech%'",
+                    "SELECT * FROM employees WHERE department LIKE '%Tech%'",
+                    "SELECT * FROM employees WHERE department LIKE '*Tech*'",
+                    "SELECT * FROM employees WHERE department CONTAINS 'Tech'"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> The <code>LIKE</code> operator in SQL performs pattern matching using wildcards. The percent sign (<code>%</code>) matches zero, one, or multiple characters on either side of the string, allowing it to capture substring matches like 'FinTech' or 'Tech Support'.</p>"
+            },
+            {
+                scenario: "You write a delete routine: <code>cursor.execute(\"DELETE FROM employees WHERE employee_id = ?\", (emp_id,))</code>. If the employee ID does not exist in the database, what does SQLite do?",
+                question: "What is the runtime result of executing a DELETE command on a non-existent ID?",
+                options: [
+                    "It raises a KeyError exception.",
+                    "It raises a sqlite3.OperationalError because no rows were deleted.",
+                    "It completes successfully without raising an error, and cursor.rowcount is set to 0.",
+                    "It automatically rolls back the current transaction."
+                ],
+                correctIndex: 2,
+                explanation: "<p><strong>Why this is correct:</strong> Deleting a row that does not exist is a valid SQL operation. The database engine executes the query successfully, deletes 0 rows, and reports a <code>cursor.rowcount</code> of 0 without raising any exception.</p>"
+            },
+            {
+                scenario: "You are collecting numerical values from the console using input(). To ensure the salary entered by the user is a valid floating point number before executing database queries, you write: <code>salary = float(input(\"Enter Salary: \"))</code>.",
+                question: "Which Python exception is raised if the user inputs alphabetic text (e.g. \"Seventy Thousand\") instead of numbers?",
+                options: [
+                    "TypeError",
+                    "ValueError",
+                    "ArithmeticError",
+                    "sqlite3.DataError"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> The <code>float()</code> constructor raises a <code>ValueError</code> if it receives a string that cannot be parsed into a numeric representation.</p>"
+            },
+            {
+                scenario: "When your database application terminates, you want to release all database file descriptors and unlock the database file from the operating system.",
+                question: "Which method should you call on the connection object to close it?",
+                options: [
+                    "connection.close()",
+                    "connection.exit()",
+                    "connection.disconnect()",
+                    "connection.terminate()"
+                ],
+                correctIndex: 0,
+                explanation: "<p><strong>Why this is correct:</strong> The <code>connection.close()</code> method closes the database connection, rolling back any uncommitted transactions and releasing file locks on <code>retailmax.db</code>.</p>"
+            },
+            {
+                scenario: "You are comparing search efficiency. The Project Manager notes: 'As our dataset grows to 50,000 employees, using SQLite is much faster than searching a raw CSV file row-by-row.'",
+                question: "What is the average time complexity of looking up a record by primary key in SQLite versus searching it in a flat CSV file?",
+                options: [
+                    "CSV is O(1); SQLite is O(N)",
+                    "CSV is O(N); SQLite is O(log N) or O(1)",
+                    "CSV is O(N^2); SQLite is O(N)",
+                    "Both are O(N) because database records must be read from disk."
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> A flat CSV file has no index, requiring a linear search through all rows yielding <code>O(N)</code> time complexity. Relational databases index Primary Keys (typically using B-Trees), enabling lookups in logarithmic <code>O(log N)</code> or constant <code>O(1)</code> time.</p>"
+            },
+            {
+                scenario: "You want to perform multiple operations. If one operation fails, you want to undo all changes made during the current transaction to prevent database inconsistency.",
+                question: "Which connection method is used to revert database changes made since the last commit?",
+                options: [
+                    "connection.rollback()",
+                    "connection.revert()",
+                    "connection.undo()",
+                    "connection.reset()"
+                ],
+                correctIndex: 0,
+                explanation: "<p><strong>Why this is correct:</strong> Calling <code>connection.rollback()</code> reverts the database to its state at the last commit, undoing all modifications made during the active transaction.</p>"
+            }
+        ];
+
+        // State variables
+        let username = "";
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOptionIndex = null;
+        let isAnswerChecked = false;
+        let userAnswers = []; // Records user performance
+
+        // DOM elements
+        const welcomeScreen = document.getElementById("welcomeScreen");
+        const questionScreen = document.getElementById("questionScreen");
+        const resultScreen = document.getElementById("resultScreen");
+        const progressContainer = document.getElementById("progressContainer");
+        const progressBar = document.getElementById("progressBar");
+        
+        const usernameInput = document.getElementById("usernameInput");
+        const startBtn = document.getElementById("startBtn");
+        const quizSubtitle = document.getElementById("quizSubtitle");
+        
+        const scenarioText = document.getElementById("scenarioText");
+        const questionText = document.getElementById("questionText");
+        const optionsList = document.getElementById("optionsList");
+        
+        const explanationBox = document.getElementById("explanationBox");
+        const explanationHeader = document.getElementById("explanationHeader");
+        const explanationDesc = document.getElementById("explanationDesc");
+        
+        const questionNumber = document.getElementById("questionNumber");
+        const actionBtn = document.getElementById("actionBtn");
+        const restartBtn = document.getElementById("restartBtn");
+        
+        const scoreVal = document.getElementById("scoreVal");
+        const scoreTotal = document.getElementById("scoreTotal");
+        const scoreFill = document.getElementById("scoreFill");
+        const badgeTitle = document.getElementById("badgeTitle");
+        const badgeDesc = document.getElementById("badgeDesc");
+        const reviewList = document.getElementById("reviewList");
+
+        // Start button handler
+        startBtn.addEventListener("click", () => {
+            username = usernameInput.value.trim() || "Candidate";
+            welcomeScreen.style.display = "none";
+            questionScreen.style.display = "block";
+            progressContainer.style.display = "block";
+            
+            quizSubtitle.textContent = `Welcome ${username}! Solve these database scenarios to complete your Sprint 3 validation.`;
+            
+            scoreTotal.textContent = `/${questions.length}`;
+            loadQuestion(0);
+        });
+
+        // Load question at index
+        function loadQuestion(index) {
+            currentQuestionIndex = index;
+            selectedOptionIndex = null;
+            isAnswerChecked = false;
+            
+            const q = questions[index];
+            
+            // Progress Bar
+            const percent = ((index) / questions.length) * 100;
+            progressBar.style.width = `${percent}%`;
+            
+            // Hide explanation
+            explanationBox.style.display = "none";
+            
+            // Populate content
+            scenarioText.innerHTML = q.scenario;
+            questionText.textContent = q.question;
+            questionNumber.textContent = `Question ${index + 1} of ${questions.length}`;
+            
+            // Action button setup
+            actionBtn.textContent = "Check Answer";
+            actionBtn.disabled = true;
+            
+            // Build options
+            optionsList.innerHTML = "";
+            q.options.forEach((optText, optIdx) => {
+                const card = document.createElement("div");
+                card.className = "option-card";
+                card.id = `option-${optIdx}`;
+                card.innerHTML = `
+                    <div class="option-radio"></div>
+                    <div class="option-text">${optText}</div>
+                `;
+                
+                card.addEventListener("click", () => {
+                    if (isAnswerChecked) return;
+                    selectOption(optIdx);
+                });
+                
+                optionsList.appendChild(card);
+            });
+        }
+
+        // Handle option selection
+        function selectOption(idx) {
+            selectedOptionIndex = idx;
+            actionBtn.disabled = false;
+            
+            // Highlight selected option
+            document.querySelectorAll(".option-card").forEach((card, cIdx) => {
+                if (cIdx === idx) {
+                    card.classList.add("selected");
+                } else {
+                    card.classList.remove("selected");
+                }
+            });
+        }
+
+        // Action button click handler
+        actionBtn.addEventListener("click", () => {
+            if (!isAnswerChecked) {
+                checkAnswer();
+            } else {
+                nextQuestion();
+            }
+        });
+
+        // Check selected answer
+        function checkAnswer() {
+            isAnswerChecked = true;
+            const q = questions[currentQuestionIndex];
+            const isCorrect = (selectedOptionIndex === q.correctIndex);
+            
+            // Record answer for final summary
+            userAnswers.push({
+                questionIndex: currentQuestionIndex,
+                selected: selectedOptionIndex,
+                correct: q.correctIndex,
+                isCorrect: isCorrect
+            });
+
+            if (isCorrect) {
+                score++;
+                explanationHeader.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Correct Answer!
+                `;
+                explanationHeader.className = "explanation-header correct-text";
+            } else {
+                explanationHeader.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    Incorrect Answer
+                `;
+                explanationHeader.className = "explanation-header incorrect-text";
+            }
+            
+            explanationDesc.innerHTML = q.explanation;
+            explanationBox.style.display = "block";
+            
+            // Style options based on validation
+            document.querySelectorAll(".option-card").forEach((card, cIdx) => {
+                if (cIdx === q.correctIndex) {
+                    card.classList.add("correct");
+                } else if (cIdx === selectedOptionIndex) {
+                    card.classList.add("incorrect");
+                }
+                // Disable further transitions
+                card.style.cursor = "default";
+            });
+            
+            // Update button label
+            if (currentQuestionIndex < questions.length - 1) {
+                actionBtn.textContent = "Next Question";
+            } else {
+                actionBtn.textContent = "Show Final Results";
+            }
+        }
+
+        // Load next question or show results
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                loadQuestion(currentQuestionIndex + 1);
+            } else {
+                showResults();
+            }
+        }
+
+        // Show final results screen
+        function showResults() {
+            questionScreen.style.display = "none";
+            resultScreen.style.display = "block";
+            progressBar.style.width = "100%";
+            
+            // Set circle progress animation
+            const circumference = 2 * Math.PI * 70; // 439.8
+            const offset = circumference - (score / questions.length) * circumference;
+            scoreFill.style.strokeDasharray = circumference;
+            
+            // Trigger animation frame delay
+            setTimeout(() => {
+                scoreFill.style.strokeDashoffset = offset;
+            }, 100);
+            
+            scoreVal.textContent = score;
+            
+            // Badges evaluations
+            let badge = "";
+            let desc = "";
+            
+            if (score === questions.length) {
+                badge = "Lead Database Architect";
+                desc = `Outstanding job, ${username}! You demonstrated perfect knowledge of SQLite connections, schema constraints, parameterized queries, transaction controls, and aggregation analytics. RetailMax databases are in exceptionally safe hands.`;
+            } else if (score >= questions.length * 0.7) {
+                badge = "Database Engineer";
+                desc = `Great job, ${username}. You have a very solid understanding of relational database structures and migration patterns in Python. You scored ${score}/${questions.length} and are ready to deploy enterprise DB solutions.`;
+            } else {
+                badge = "SQL Apprentice";
+                desc = `You scored ${score}/${questions.length}. Review the specific feedback on database transactions, parameter bindings, and aggregation queries to build up confidence for the next database sprint.`;
+            }
+            
+            badgeTitle.textContent = badge;
+            badgeDesc.textContent = desc;
+            
+            // Build Review Drawer list
+            reviewList.innerHTML = "";
+            userAnswers.forEach((ans) => {
+                const q = questions[ans.questionIndex];
+                const card = document.createElement("div");
+                card.className = "review-card";
+                card.innerHTML = `
+                    <div class="review-card-header">
+                        <span>Scenario ${ans.questionIndex + 1}</span>
+                        <span class="status-pill ${ans.isCorrect ? 'correct' : 'incorrect'}">
+                            ${ans.isCorrect ? 'Correct' : 'Incorrect'}
+                        </span>
+                    </div>
+                    <div class="review-q-text">${q.question}</div>
+                    <div class="review-ans-row">
+                        <span>Your selection:</span> 
+                        <pre style="font-family: 'Fira Code', monospace; font-size: 0.85rem; background: rgba(0,0,0,0.2); padding: 6px; border-radius: 6px; overflow-x: auto; margin-top: 4px;">${q.options[ans.selected]}</pre>
+                    </div>
+                    ${!ans.isCorrect ? `
+                    <div class="review-ans-row" style="margin-top: 8px; color: var(--color-success);">
+                        <span>Correct answer:</span> 
+                        <pre style="font-family: 'Fira Code', monospace; font-size: 0.85rem; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.1); padding: 6px; border-radius: 6px; overflow-x: auto; margin-top: 4px;">${q.options[ans.correct]}</pre>
+                    </div>` : ''}
+                    <div style="margin-top: 12px; font-size: 0.9rem; color: var(--text-muted); line-height: 1.4;">
+                        ${q.explanation}
+                    </div>
+                `;
+                reviewList.appendChild(card);
+            });
+        }
+
+        // Restart quiz handler
+        restartBtn.addEventListener("click", () => {
+            score = 0;
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            
+            resultScreen.style.display = "none";
+            questionScreen.style.display = "block";
+            
+            // Reset stroke fill
+            scoreFill.style.strokeDashoffset = 440;
+            
+            loadQuestion(0);
+        });
+    </script>
+</body>
+</html>
