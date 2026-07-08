@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RetailMax HR Analytics - Day 4 Interactive Quiz</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #311042 100%);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-hover-bg: rgba(255, 255, 255, 0.07);
+            --glass-hover-border: rgba(255, 255, 255, 0.15);
+            
+            --color-primary: #8b5cf6; /* Violet */
+            --color-primary-glow: rgba(139, 92, 246, 0.4);
+            --color-secondary: #ec4899; /* Pink */
+            --color-secondary-glow: rgba(236, 72, 153, 0.4);
+            --color-success: #10b981; /* Emerald */
+            --color-error: #ef4444; /* Rose */
+            
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --text-bright: #ffffff;
+            
+            --transition-speed: 0.3s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            padding: 20px;
+        }
+
+        .ambient-glow-1 {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--color-primary-glow) 0%, transparent 70%);
+            top: -100px;
+            left: -100px;
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(40px);
+        }
+
+        .ambient-glow-2 {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--color-secondary-glow) 0%, transparent 70%);
+            bottom: -150px;
+            right: -100px;
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(40px);
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: 750px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            position: relative;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+            box-shadow: 0 0 10px var(--color-primary);
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .quiz-badge {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--color-secondary);
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            padding: 6px 16px;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .quiz-title {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--text-bright), #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .quiz-subtitle {
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        .welcome-screen {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .welcome-icon {
+            font-size: 4.5rem;
+            margin-bottom: 20px;
+            display: inline-block;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .input-group {
+            margin: 25px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .input-label {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .username-input {
+            width: 100%;
+            max-width: 320px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 14px 20px;
+            font-family: inherit;
+            font-size: 1rem;
+            color: var(--text-bright);
+            text-align: center;
+            transition: all var(--transition-speed);
+            outline: none;
+        }
+
+        .username-input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .btn {
+            background: linear-gradient(90deg, var(--color-primary) 0%, #6d28d9 100%);
+            color: var(--text-bright);
+            border: none;
+            padding: 14px 36px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5);
+            background: linear-gradient(90deg, #6d28d9 0%, var(--color-primary) 100%);
+        }
+
+        .btn:disabled {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .question-screen {
+            display: none;
+        }
+
+        .scenario-box {
+            background: rgba(255, 255, 255, 0.02);
+            border-left: 4px solid var(--color-secondary);
+            padding: 20px;
+            border-radius: 0 16px 16px 0;
+            margin-bottom: 25px;
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+
+        .scenario-box strong {
+            color: var(--color-secondary);
+            display: block;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            line-height: 1.4;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .option-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 16px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .option-card:hover {
+            background: var(--glass-hover-bg);
+            border-color: var(--glass-hover-border);
+            transform: translateX(4px);
+        }
+
+        .option-card.selected {
+            background: rgba(139, 92, 246, 0.08);
+            border-color: var(--color-primary);
+        }
+
+        .option-radio {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--text-muted);
+            border-radius: 50%;
+            position: relative;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .option-card.selected .option-radio {
+            border-color: var(--color-primary);
+        }
+
+        .option-card.selected .option-radio::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .option-card.correct {
+            background: rgba(16, 185, 129, 0.08) !important;
+            border-color: var(--color-success) !important;
+        }
+
+        .option-card.correct .option-radio {
+            border-color: var(--color-success) !important;
+        }
+
+        .option-card.correct .option-radio::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--color-success);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .option-card.incorrect {
+            background: rgba(239, 68, 68, 0.08) !important;
+            border-color: var(--color-error) !important;
+        }
+
+        .option-card.incorrect .option-radio {
+            border-color: var(--color-error) !important;
+        }
+
+        .option-card.incorrect .option-radio::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--color-error);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .option-text {
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .option-text pre {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+
+        .explanation-box {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            display: none;
+        }
+
+        .explanation-header {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .correct-text { color: var(--color-success); }
+        .incorrect-text { color: var(--color-error); }
+
+        .explanation-desc {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
+
+        .footer-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 25px;
+        }
+
+        .question-number {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .result-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .score-circle-container {
+            width: 160px;
+            height: 160px;
+            position: relative;
+            margin: 0 auto 25px auto;
+        }
+
+        .score-svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .score-track {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.03);
+            stroke-width: 12;
+        }
+
+        .score-fill {
+            fill: none;
+            stroke: url(#scoreGrad);
+            stroke-width: 12;
+            stroke-linecap: round;
+            stroke-dasharray: 439.8;
+            stroke-dashoffset: 439.8;
+            transition: stroke-dashoffset 1.5s ease-out;
+        }
+
+        .score-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .score-val {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--text-bright);
+            line-height: 1;
+        }
+
+        .score-total {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .badge-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            background: linear-gradient(to right, #ec4899, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .badge-desc {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            max-width: 550px;
+            margin: 0 auto 30px auto;
+        }
+
+        .review-section {
+            text-align: left;
+            margin-top: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 30px;
+        }
+
+        .review-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .review-card {
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+
+        .review-card-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--color-secondary);
+            margin-bottom: 10px;
+        }
+
+        .status-pill {
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-pill.correct {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+        }
+
+        .status-pill.incorrect {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-error);
+        }
+
+        .review-q-text {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .review-ans-row {
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+        }
+
+        .review-ans-row span {
+            color: var(--text-muted);
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+
+    <div class="quiz-container">
+        <!-- PROGRESS BAR -->
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- HEADER -->
+        <div class="quiz-header">
+            <span class="quiz-badge">Validation Sprint 4</span>
+            <h1 class="quiz-title">RetailMax HR Analytics System</h1>
+            <p class="quiz-subtitle" id="quizSubtitle">From Data Storage to Business Intelligence</p>
+        </div>
+
+        <!-- WELCOME SCREEN -->
+        <div class="welcome-screen" id="welcomeScreen">
+            <span class="welcome-icon">📈</span>
+            <p style="font-size: 1.1rem; line-height: 1.6; max-width: 500px; margin: 0 auto 20px auto; color: var(--text-muted);">
+                Welcome to Day 4 validation. Put yourself in the shoes of a Data Analyst at RetailMax. Solve real-world data profiling, cleaning, analysis, charting, and data contract scenarios using Pandas and DuckDB.
+            </p>
+            <div class="input-group">
+                <label for="usernameInput" class="input-label">Enter your name to begin:</label>
+                <input type="text" id="usernameInput" class="username-input" placeholder="e.g. Himanshu" value="Himanshu">
+            </div>
+            <button class="btn" id="startBtn">
+                Start Analytics Validation
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+        </div>
+
+        <!-- QUESTION SCREEN -->
+        <div class="question-screen" id="questionScreen">
+            <div class="scenario-box" id="scenarioBox">
+                <strong>Scenario:</strong>
+                <span id="scenarioText">Loading scenario...</span>
+            </div>
+            <div class="question-text" id="questionText">Loading question...</div>
+            
+            <div class="options-list" id="optionsList">
+                <!-- Dynamically filled -->
+            </div>
+
+            <!-- Explanation box (revealed on submit) -->
+            <div class="explanation-box" id="explanationBox">
+                <div class="explanation-header" id="explanationHeader"></div>
+                <div class="explanation-desc" id="explanationDesc"></div>
+            </div>
+
+            <!-- Footer Controls -->
+            <div class="footer-controls">
+                <span class="question-number" id="questionNumber">Question 1 of 10</span>
+                <button class="btn" id="actionBtn" disabled>Check Answer</button>
+            </div>
+        </div>
+
+        <!-- RESULTS SCREEN -->
+        <div class="result-screen" id="resultScreen">
+            <div class="score-circle-container">
+                <svg class="score-svg" viewBox="0 0 160 160">
+                    <defs>
+                        <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="var(--color-primary)" />
+                            <stop offset="100%" stop-color="var(--color-secondary)" />
+                        </linearGradient>
+                    </defs>
+                    <circle class="score-track" cx="80" cy="80" r="70" />
+                    <circle class="score-fill" id="scoreFill" cx="80" cy="80" r="70" />
+                </svg>
+                <div class="score-text">
+                    <span class="score-val" id="scoreVal">0</span>
+                    <span class="score-total" id="scoreTotal">/10</span>
+                </div>
+            </div>
+
+            <h2 class="badge-title" id="badgeTitle">Evaluation Loading...</h2>
+            <p class="badge-desc" id="badgeDesc">Analyzing your answers...</p>
+
+            <button class="btn" id="restartBtn">
+                Try Quiz Again
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            </button>
+
+            <!-- Detailed Review Drawers -->
+            <div class="review-section" id="reviewSection">
+                <h3 class="review-title">Sprint Summary & Review</h3>
+                <div id="reviewList">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Questions Database
+        const questions = [
+            {
+                scenario: "You are initiating the transition from SQLite database to Business Intelligence analytics. You decide to load yesterday's database records into memory. You write:<br><pre style=\"font-family: 'Fira Code', monospace; font-size: 0.9rem; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 8px;\">import sqlite3\nimport pandas as pd\nconn = sqlite3.connect(\"employees.db\")\ndf = pd.read_sql_query(\"SELECT * FROM employees\", conn)\nconn.close()</pre>",
+                question: "What does the resulting variable 'df' represent in your Python script?",
+                options: [
+                    "A direct socket database cursor pointing to SQLite.",
+                    "A 2D labeled tabulating structure called a DataFrame with rows, columns, and indexes.",
+                    "A nested Python list of tuples.",
+                    "A JSON-formatted string."
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> <code>pd.read_sql_query()</code> returns a Pandas <strong>DataFrame</strong>, which is a 2-dimensional, size-mutable, and potentially heterogeneous tabular data structure. It structures rows and columns with labels and an index for optimized analysis.</p>"
+            },
+            {
+                scenario: "HR loads an export dataset of 15,000 employee records. Before running aggregates, you need to understand the column datatypes and check for missing null values in the columns.",
+                question: "Which Pandas DataFrame method should you call to output this descriptive metadata?",
+                options: [
+                    "df.describe()",
+                    "df.shape()",
+                    "df.info()",
+                    "df.head(15000)"
+                ],
+                correctIndex: 2,
+                explanation: "<p><strong>Why this is correct:</strong> <code>df.info()</code> prints a concise summary of the DataFrame, including the index range, the list of columns, data types, count of non-null values, and memory usage. It is the best starting command to check column schemas.</p>"
+            },
+            {
+                scenario: "The legacy system imported records where several employees do not have values registered in the Salary column, causing Pandas to load them as NaN. You decide to replace all NaN values with the median salary of the dataset.",
+                question: "Which code snippet correctly implements this cleaning step?",
+                options: [
+                    "df['Salary'] = df['Salary'].dropna()",
+                    "df['Salary'] = df['Salary'].fillna(df['Salary'].median())",
+                    "df['Salary'] = df['Salary'].replace_nan(df['Salary'].median())",
+                    "df['Salary'] = df['Salary'].astype(float)"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> <code>df.fillna()</code> is the standard Pandas method used to replace missing (`NaN`) values with a specified scalar value or aggregated metric (like the median). <code>dropna()</code> would delete those employee rows completely.</p>"
+            },
+            {
+                scenario: "Due to manual keying errors in the database, some employee IDs were accidentally duplicated (e.g., two rows for EmployeeID 1024). You want to drop duplicate records on 'EmployeeID', keeping only the first occurrence.",
+                question: "Which statement correctly cleans the duplicate rows?",
+                options: [
+                    "df = df.drop_duplicates(subset=['EmployeeID'], keep='first')",
+                    "df = df.unique(subset=['EmployeeID'])",
+                    "df = df.groupby('EmployeeID').first()",
+                    "df = df.dropna(subset=['EmployeeID'])"
+                ],
+                correctIndex: 0,
+                explanation: "<p><strong>Why this is correct:</strong> <code>df.drop_duplicates()</code> with the <code>subset=['EmployeeID']</code> parameter searches for duplicates in the specified column only. The <code>keep='first'</code> parameter ensures that only the first occurrence is kept, and subsequent duplicates are discarded.</p>"
+            },
+            {
+                scenario: "The HR Director requests a breakdown showing the headcount (number of employees) in each department.",
+                question: "Which code snippet correctly groups the records and outputs the count for each department?",
+                options: [
+                    "df.groupby('Department').size()",
+                    "df.group_by('Department')['EmployeeID'].count()",
+                    "df.groupby('Department').mean()",
+                    "df.agg('count').groupby('Department')"
+                ],
+                correctIndex: 0,
+                explanation: "<p><strong>Why this is correct:</strong> `df.groupby('Department').size()` groups the DataFrame by the 'Department' column and returns a Series with the size (row count) of each group. Alternatively, `df.groupby('Department')['EmployeeID'].count()` is also correct, but `groupby().size()` is the direct and fastest aggregation method.</p>"
+            },
+            {
+                scenario: "The CEO wants to find all employees who belong to the 'Finance' department AND earn a salary greater than $100,000.",
+                question: "Which filtering statement utilizes correct Pandas boolean indexing syntax?",
+                options: [
+                    "df[df['Department'] == 'Finance' and df['Salary'] > 100000]",
+                    "df[(df['Department'] == 'Finance') & (df['Salary'] > 100000)]",
+                    "df[(df['Department'] == 'Finance') | (df['Salary'] > 100000)]",
+                    "df.filter('Department == Finance & Salary > 100000')"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> Pandas uses bitwise operators (<code>&</code> for AND, <code>|</code> for OR) for filtering, not python keywords <code>and/or</code>. Each condition must be wrapped in parentheses <code>(cond1) & (cond2)</code> due to operator precedence rules in Python.</p>"
+            },
+            {
+                scenario: "You need to export a report of the top 5 highest-earning employees in the company.",
+                question: "Which statement yields this list sorted with the largest salary at the top?",
+                options: [
+                    "df.sort_values(by='Salary').head(5)",
+                    "df.nlargest(5, 'Salary')",
+                    "df.sort('Salary', descending=True).head(5)",
+                    "df.head(5).sort_values(by='Salary', ascending=False)"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> The <code>df.nlargest(5, 'Salary')</code> method directly yields the top 5 rows sorted in descending order of the specified column. <code>df.sort_values(by='Salary', ascending=False).head(5)</code> would also be correct, but choice A is missing <code>ascending=False</code>, and choice C uses a non-existent method <code>df.sort()</code>.</p>"
+            },
+            {
+                scenario: "You want to run a quick SQL analytical query on your local Pandas DataFrame <code>df</code> in Python without configuring a database server.",
+                question: "Which embedded data tool allows executing SQL queries directly on local Pandas DataFrames in memory?",
+                options: [
+                    "SQLite3 Server",
+                    "Polars Rust API",
+                    "DuckDB in-memory engine",
+                    "Pandera contracts"
+                ],
+                correctIndex: 2,
+                explanation: "<p><strong>Why this is correct:</strong> **DuckDB** is an embedded, serverless database engine optimized for analytical queries. It can query local in-memory Pandas DataFrames directly, making it extremely easy to execute SQL query strings in-line and export the results back as a DataFrame.</p>"
+            },
+            {
+                scenario: "You are establishing a corporate Data Contract. The contract requires that EmployeeID must be present and unique, Salary must be positive, and Department must belong to an approved list of corporate departments.",
+                question: "Which validation check correctly flags a negative salary row in the incoming DataFrame raw_df?",
+                options: [
+                    "raw_df[raw_df['Salary'] < 0]",
+                    "raw_df['Salary'].isnull()",
+                    "raw_df.duplicated(subset=['Salary'])",
+                    "raw_df[~raw_df['Department'].isin(['Salary'])]"
+                ],
+                correctIndex: 0,
+                explanation: "<p><strong>Why this is correct:</strong> Filtering rows where <code>Salary < 0</code> using <code>raw_df[raw_df['Salary'] < 0]</code> correctly isolates records that violate the non-negativity contract constraint so they can be logged or quarantined.</p>"
+            },
+            {
+                scenario: "You want to save a visual chart representing employee counts by department to send to the CEO. You write:<br><pre style=\"font-family: 'Fira Code', monospace; font-size: 0.9rem; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; margin-top: 8px;\">import matplotlib.pyplot as plt\ndf['Department'].value_counts().plot(kind='bar')</pre>",
+                question: "Which function call saves the active plotted chart as a PNG image in your working directory?",
+                options: [
+                    "plt.save('department_chart.png')",
+                    "plt.savefig('department_chart.png')",
+                    "plt.export('department_chart.png')",
+                    "df.save_chart('department_chart.png')"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> Matplotlib uses <code>plt.savefig('filename.png')</code> to save the active figure to the local filesystem. There is no `plt.save()` or `df.save_chart()` method.</p>"
+            }
+        ];
+
+        // State variables
+        let username = "";
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOptionIndex = null;
+        let isAnswerChecked = false;
+        let userAnswers = []; // Records user performance
+
+        // DOM elements
+        const welcomeScreen = document.getElementById("welcomeScreen");
+        const questionScreen = document.getElementById("questionScreen");
+        const resultScreen = document.getElementById("resultScreen");
+        const progressContainer = document.getElementById("progressContainer");
+        const progressBar = document.getElementById("progressBar");
+        
+        const usernameInput = document.getElementById("usernameInput");
+        const startBtn = document.getElementById("startBtn");
+        const quizSubtitle = document.getElementById("quizSubtitle");
+        
+        const scenarioText = document.getElementById("scenarioText");
+        const questionText = document.getElementById("questionText");
+        const optionsList = document.getElementById("optionsList");
+        
+        const explanationBox = document.getElementById("explanationBox");
+        const explanationHeader = document.getElementById("explanationHeader");
+        const explanationDesc = document.getElementById("explanationDesc");
+        
+        const questionNumber = document.getElementById("questionNumber");
+        const actionBtn = document.getElementById("actionBtn");
+        const restartBtn = document.getElementById("restartBtn");
+        
+        const scoreVal = document.getElementById("scoreVal");
+        const scoreTotal = document.getElementById("scoreTotal");
+        const scoreFill = document.getElementById("scoreFill");
+        const badgeTitle = document.getElementById("badgeTitle");
+        const badgeDesc = document.getElementById("badgeDesc");
+        const reviewList = document.getElementById("reviewList");
+
+        // Start button handler
+        startBtn.addEventListener("click", () => {
+            username = usernameInput.value.trim() || "Candidate";
+            welcomeScreen.style.display = "none";
+            questionScreen.style.display = "block";
+            progressContainer.style.display = "block";
+            
+            quizSubtitle.textContent = `Welcome ${username}! Solve these scenarios to complete your Sprint 4 validation.`;
+            
+            scoreTotal.textContent = `/${questions.length}`;
+            loadQuestion(0);
+        });
+
+        // Load question at index
+        function loadQuestion(index) {
+            currentQuestionIndex = index;
+            selectedOptionIndex = null;
+            isAnswerChecked = false;
+            
+            const q = questions[index];
+            
+            // Progress Bar
+            const percent = ((index) / questions.length) * 100;
+            progressBar.style.width = `${percent}%`;
+            
+            // Hide explanation
+            explanationBox.style.display = "none";
+            
+            // Populate content
+            scenarioText.innerHTML = q.scenario;
+            questionText.textContent = q.question;
+            questionNumber.textContent = `Question ${index + 1} of ${questions.length}`;
+            
+            // Action button setup
+            actionBtn.textContent = "Check Answer";
+            actionBtn.disabled = true;
+            
+            // Build options
+            optionsList.innerHTML = "";
+            q.options.forEach((optText, optIdx) => {
+                const card = document.createElement("div");
+                card.className = "option-card";
+                card.id = `option-${optIdx}`;
+                card.innerHTML = `
+                    <div class="option-radio"></div>
+                    <div class="option-text">${optText}</div>
+                `;
+                
+                card.addEventListener("click", () => {
+                    if (isAnswerChecked) return;
+                    selectOption(optIdx);
+                });
+                
+                optionsList.appendChild(card);
+            });
+        }
+
+        // Handle option selection
+        function selectOption(idx) {
+            selectedOptionIndex = idx;
+            actionBtn.disabled = false;
+            
+            // Highlight selected option
+            document.querySelectorAll(".option-card").forEach((card, cIdx) => {
+                if (cIdx === idx) {
+                    card.classList.add("selected");
+                } else {
+                    card.classList.remove("selected");
+                }
+            });
+        }
+
+        // Action button click handler
+        actionBtn.addEventListener("click", () => {
+            if (!isAnswerChecked) {
+                checkAnswer();
+            } else {
+                nextQuestion();
+            }
+        });
+
+        // Check selected answer
+        function checkAnswer() {
+            isAnswerChecked = true;
+            const q = questions[currentQuestionIndex];
+            const isCorrect = (selectedOptionIndex === q.correctIndex);
+            
+            // Record answer for final summary
+            userAnswers.push({
+                questionIndex: currentQuestionIndex,
+                selected: selectedOptionIndex,
+                correct: q.correctIndex,
+                isCorrect: isCorrect
+            });
+
+            if (isCorrect) {
+                score++;
+                explanationHeader.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Correct Answer!
+                `;
+                explanationHeader.className = "explanation-header correct-text";
+            } else {
+                explanationHeader.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    Incorrect Answer
+                `;
+                explanationHeader.className = "explanation-header incorrect-text";
+            }
+            
+            explanationDesc.innerHTML = q.explanation;
+            explanationBox.style.display = "block";
+            
+            // Style options based on validation
+            document.querySelectorAll(".option-card").forEach((card, cIdx) => {
+                if (cIdx === q.correctIndex) {
+                    card.classList.add("correct");
+                } else if (cIdx === selectedOptionIndex) {
+                    card.classList.add("incorrect");
+                }
+                card.style.cursor = "default";
+            });
+            
+            // Update button label
+            if (currentQuestionIndex < questions.length - 1) {
+                actionBtn.textContent = "Next Question";
+            } else {
+                actionBtn.textContent = "Show Final Results";
+            }
+        }
+
+        // Load next question or show results
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                loadQuestion(currentQuestionIndex + 1);
+            } else {
+                showResults();
+            }
+        }
+
+        // Show final results screen
+        function showResults() {
+            questionScreen.style.display = "none";
+            resultScreen.style.display = "block";
+            progressBar.style.width = "100%";
+            
+            // Set circle progress animation
+            const circumference = 2 * Math.PI * 70; // 439.8
+            const offset = circumference - (score / questions.length) * circumference;
+            scoreFill.style.strokeDasharray = circumference;
+            
+            setTimeout(() => {
+                scoreFill.style.strokeDashoffset = offset;
+            }, 100);
+            
+            scoreVal.textContent = score;
+            
+            // Badges evaluations
+            let badge = "";
+            let desc = "";
+            
+            if (score === questions.length) {
+                badge = "Lead HR Data Engineer / Analyst";
+                desc = `Incredible work, ${username}! You demonstrated perfect mastery of Pandas aggregations, data exploration, DuckDB SQL integrations, data contract designs, and visual plotting. You are ready to architect the automated ETL pipelines tomorrow!`;
+            } else if (score >= questions.length * 0.7) {
+                badge = "Senior HR Data Analyst";
+                desc = `Well done, ${username}. You scored ${score}/${questions.length}. You have a very clear grasp of Pandas filtering, sorting, and cleaning APIs. Keep exploring advanced indexing to level up further.`;
+            } else {
+                badge = "Junior Data Analyst Associate";
+                desc = `You scored ${score}/${questions.length}. Review the explanations in the summary card below and practice DataFrame boolean masking and grouping structures before moving on.`;
+            }
+            
+            badgeTitle.textContent = badge;
+            badgeDesc.textContent = desc;
+            
+            // Build Review Drawer list
+            reviewList.innerHTML = "";
+            userAnswers.forEach((ans) => {
+                const q = questions[ans.questionIndex];
+                const card = document.createElement("div");
+                card.className = "review-card";
+                card.innerHTML = `
+                    <div class="review-card-header">
+                        <span>Scenario ${ans.questionIndex + 1}</span>
+                        <span class="status-pill ${ans.isCorrect ? 'correct' : 'incorrect'}">
+                            ${ans.isCorrect ? 'Correct' : 'Incorrect'}
+                        </span>
+                    </div>
+                    <div class="review-q-text">${q.question}</div>
+                    <div class="review-ans-row">
+                        <span>Your selection:</span> 
+                        <pre style="font-family: 'Fira Code', monospace; font-size: 0.85rem; background: rgba(0,0,0,0.2); padding: 6px; border-radius: 6px; overflow-x: auto; margin-top: 4px;">${q.options[ans.selected]}</pre>
+                    </div>
+                    ${!ans.isCorrect ? `
+                    <div class="review-ans-row" style="margin-top: 8px; color: var(--color-success);">
+                        <span>Correct answer:</span> 
+                        <pre style="font-family: 'Fira Code', monospace; font-size: 0.85rem; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.1); padding: 6px; border-radius: 6px; overflow-x: auto; margin-top: 4px;">${q.options[ans.correct]}</pre>
+                    </div>` : ''}
+                    <div style="margin-top: 12px; font-size: 0.9rem; color: var(--text-muted); line-height: 1.4;">
+                        ${q.explanation}
+                    </div>
+                `;
+                reviewList.appendChild(card);
+            });
+        }
+
+        // Restart quiz handler
+        restartBtn.addEventListener("click", () => {
+            score = 0;
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            
+            resultScreen.style.display = "none";
+            questionScreen.style.display = "block";
+            
+            // Reset stroke fill
+            scoreFill.style.strokeDashoffset = 440;
+            
+            loadQuestion(0);
+        });
+    </script>
+</body>
+</html>
