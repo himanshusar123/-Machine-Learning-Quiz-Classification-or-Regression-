@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RetailMax Enterprise Data Pipeline - Day 5 Interactive Quiz</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #020617 0%, #0f172a 50%, #1e1b4b 100%);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.07);
+            --glass-hover-bg: rgba(255, 255, 255, 0.06);
+            --glass-hover-border: rgba(255, 255, 255, 0.12);
+            
+            --color-primary: #06b6d4; /* Electric Cyan */
+            --color-primary-glow: rgba(6, 182, 212, 0.35);
+            --color-secondary: #8b5cf6; /* Cool Violet */
+            --color-secondary-glow: rgba(139, 92, 246, 0.35);
+            --color-success: #10b981; /* Emerald */
+            --color-error: #ef4444; /* Rose */
+            
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --text-bright: #ffffff;
+            
+            --transition-speed: 0.25s;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg-gradient);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            padding: 20px;
+            position: relative;
+        }
+
+        .ambient-glow-1 {
+            position: absolute;
+            width: 450px;
+            height: 450px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--color-primary-glow) 0%, transparent 70%);
+            top: -150px;
+            left: -100px;
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(50px);
+        }
+
+        .ambient-glow-2 {
+            position: absolute;
+            width: 550px;
+            height: 550px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--color-secondary-glow) 0%, transparent 70%);
+            bottom: -200px;
+            right: -100px;
+            z-index: 0;
+            pointer-events: none;
+            filter: blur(50px);
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.45);
+            position: relative;
+            z-index: 1;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            position: relative;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-secondary) 100%);
+            border-radius: 10px;
+            transition: width 0.4s cubic-bezier(0.1, 0.8, 0.25, 1);
+            box-shadow: 0 0 12px var(--color-primary);
+        }
+
+        .quiz-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .quiz-badge {
+            background: rgba(6, 182, 212, 0.1);
+            color: var(--color-primary);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            padding: 6px 18px;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .quiz-title {
+            font-size: 2.1rem;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--text-bright), #a5b4fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .quiz-subtitle {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+        }
+
+        .welcome-screen {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .welcome-icon {
+            font-size: 5rem;
+            margin-bottom: 22px;
+            display: inline-block;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-12px); }
+        }
+
+        .input-group {
+            margin: 30px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .input-label {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .username-input {
+            width: 100%;
+            max-width: 340px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 14px 22px;
+            font-family: inherit;
+            font-size: 1.05rem;
+            color: var(--text-bright);
+            text-align: center;
+            transition: all var(--transition-speed);
+            outline: none;
+        }
+
+        .username-input:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.25);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .btn {
+            background: linear-gradient(90deg, var(--color-primary) 0%, #0891b2 100%);
+            color: var(--text-bright);
+            border: none;
+            padding: 15px 38px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all var(--transition-speed);
+            box-shadow: 0 5px 18px rgba(6, 182, 212, 0.25);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
+            background: linear-gradient(90deg, #0891b2 0%, var(--color-primary) 100%);
+        }
+
+        .btn:disabled {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-muted);
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .question-screen {
+            display: none;
+        }
+
+        .scenario-box {
+            background: rgba(255, 255, 255, 0.015);
+            border-left: 4px solid var(--color-primary);
+            padding: 22px;
+            border-radius: 0 16px 16px 0;
+            margin-bottom: 25px;
+            font-size: 1.05rem;
+            line-height: 1.65;
+        }
+
+        .scenario-box strong {
+            color: var(--color-primary);
+            display: block;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.8px;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 650;
+            margin-bottom: 25px;
+            line-height: 1.45;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .option-card {
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 16px 22px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .option-card:hover {
+            background: var(--glass-hover-bg);
+            border-color: var(--glass-hover-border);
+            transform: translateX(5px);
+        }
+
+        .option-card.selected {
+            background: rgba(6, 182, 212, 0.08);
+            border-color: var(--color-primary);
+        }
+
+        .option-radio {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--text-muted);
+            border-radius: 50%;
+            position: relative;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .option-card.selected .option-radio {
+            border-color: var(--color-primary);
+        }
+
+        .option-card.selected .option-radio::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--color-primary);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .option-card.correct {
+            background: rgba(16, 185, 129, 0.08) !important;
+            border-color: var(--color-success) !important;
+        }
+
+        .option-card.correct .option-radio {
+            border-color: var(--color-success) !important;
+        }
+
+        .option-card.correct .option-radio::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--color-success);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .option-card.incorrect {
+            background: rgba(239, 68, 68, 0.08) !important;
+            border-color: var(--color-error) !important;
+        }
+
+        .option-card.incorrect .option-radio {
+            border-color: var(--color-error) !important;
+        }
+
+        .option-card.incorrect .option-radio::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: var(--color-error);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .option-text {
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .option-text pre {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+
+        .explanation-box {
+            background: rgba(255, 255, 255, 0.015);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 14px;
+            padding: 22px;
+            margin-bottom: 25px;
+            display: none;
+        }
+
+        .explanation-header {
+            font-weight: 650;
+            font-size: 1.15rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .correct-text { color: var(--color-success); }
+        .incorrect-text { color: var(--color-error); }
+
+        .explanation-desc {
+            font-size: 1rem;
+            line-height: 1.55;
+            color: var(--text-main);
+        }
+
+        .footer-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 25px;
+        }
+
+        .question-number {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .result-screen {
+            display: none;
+            text-align: center;
+        }
+
+        .score-circle-container {
+            width: 170px;
+            height: 170px;
+            position: relative;
+            margin: 0 auto 30px auto;
+        }
+
+        .score-svg {
+            transform: rotate(-90deg);
+            width: 100%;
+            height: 100%;
+        }
+
+        .score-track {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.025);
+            stroke-width: 12;
+        }
+
+        .score-fill {
+            fill: none;
+            stroke: url(#scoreGrad);
+            stroke-width: 12;
+            stroke-linecap: round;
+            stroke-dasharray: 439.8;
+            stroke-dashoffset: 439.8;
+            transition: stroke-dashoffset 1.5s cubic-bezier(0.1, 0.8, 0.2, 1);
+        }
+
+        .score-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .score-val {
+            font-size: 3.3rem;
+            font-weight: 800;
+            color: var(--text-bright);
+            line-height: 1;
+        }
+
+        .score-total {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .badge-title {
+            font-size: 1.85rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            background: linear-gradient(to right, var(--color-primary), var(--color-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .badge-desc {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            line-height: 1.65;
+            max-width: 600px;
+            margin: 0 auto 35px auto;
+        }
+
+        .review-section {
+            text-align: left;
+            margin-top: 45px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 35px;
+        }
+
+        .review-title {
+            font-size: 1.4rem;
+            font-weight: 750;
+            margin-bottom: 22px;
+        }
+
+        .review-card {
+            background: rgba(255, 255, 255, 0.008);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 22px;
+            margin-bottom: 18px;
+        }
+
+        .review-card-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--color-primary);
+            margin-bottom: 12px;
+        }
+
+        .status-pill {
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-pill.correct {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+        }
+
+        .status-pill.incorrect {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--color-error);
+        }
+
+        .review-q-text {
+            font-size: 1.1rem;
+            font-weight: 650;
+            margin-bottom: 14px;
+            line-height: 1.45;
+        }
+
+        .review-ans-row {
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+
+        .review-ans-row span {
+            color: var(--text-muted);
+            margin-right: 5px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-glow-1"></div>
+    <div class="ambient-glow-2"></div>
+
+    <div class="quiz-container">
+        <!-- PROGRESS BAR -->
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <!-- HEADER -->
+        <div class="quiz-header">
+            <span class="quiz-badge">Validation Sprint 5</span>
+            <h1 class="quiz-title">RetailMax Enterprise Engineering</h1>
+            <p class="quiz-subtitle" id="quizSubtitle">Asynchronous Services, Package Architectures & Pipeline Testing</p>
+        </div>
+
+        <!-- WELCOME SCREEN -->
+        <div class="welcome-screen" id="welcomeScreen">
+            <span class="welcome-icon">⚡</span>
+            <p style="font-size: 1.1rem; line-height: 1.65; max-width: 550px; margin: 0 auto 25px auto; color: var(--text-muted);">
+                Welcome to the Day 5 Technical Validation. Test your mastery of enterprise Python concepts: asynchronous non-blocking I/O, type hint validations, pytest fixtures, rotating logs, custom exception strategies, and static code quality gates.
+            </p>
+            <div class="input-group">
+                <label for="usernameInput" class="input-label">Enter your name to begin:</label>
+                <input type="text" id="usernameInput" class="username-input" placeholder="e.g. Himanshu" value="Himanshu">
+            </div>
+            <button class="btn" id="startBtn">
+                Start Enterprise Validation
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+        </div>
+
+        <!-- QUESTION SCREEN -->
+        <div class="question-screen" id="questionScreen">
+            <div class="scenario-box" id="scenarioBox">
+                <strong>Scenario:</strong>
+                <span id="scenarioText">Loading scenario...</span>
+            </div>
+            <div class="question-text" id="questionText">Loading question...</div>
+            
+            <div class="options-list" id="optionsList">
+                <!-- Dynamically filled -->
+            </div>
+
+            <!-- Explanation box (revealed on submit) -->
+            <div class="explanation-box" id="explanationBox">
+                <div class="explanation-header" id="explanationHeader"></div>
+                <div class="explanation-desc" id="explanationDesc"></div>
+            </div>
+
+            <!-- Footer Controls -->
+            <div class="footer-controls">
+                <span class="question-number" id="questionNumber">Question 1 of 20</span>
+                <button class="btn" id="actionBtn" disabled>Check Answer</button>
+            </div>
+        </div>
+
+        <!-- RESULTS SCREEN -->
+        <div class="result-screen" id="resultScreen">
+            <div class="score-circle-container">
+                <svg class="score-svg" viewBox="0 0 160 160">
+                     <defs>
+                         <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                             <stop offset="0%" stop-color="var(--color-primary)" />
+                             <stop offset="100%" stop-color="var(--color-secondary)" />
+                         </linearGradient>
+                     </defs>
+                     <circle class="score-track" cx="80" cy="80" r="70" />
+                     <circle class="score-fill" id="scoreFill" cx="80" cy="80" r="70" />
+                </svg>
+                <div class="score-text">
+                    <span class="score-val" id="scoreVal">0</span>
+                    <span class="score-total" id="scoreTotal">/20</span>
+                </div>
+            </div>
+
+            <h2 class="badge-title" id="badgeTitle">Evaluation Loading...</h2>
+            <p class="badge-desc" id="badgeDesc">Analyzing your answers...</p>
+
+            <button class="btn" id="restartBtn">
+                Try Quiz Again
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+            </button>
+
+            <!-- Detailed Review Drawers -->
+            <div class="review-section" id="reviewSection">
+                <h3 class="review-title">Sprint Summary & Key Learnings</h3>
+                <div id="reviewList">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Questions Database
+        const questions = [
+            {
+                scenario: "You are setting up the module structure for the <code>retailmax</code> pipeline. You organize files as follows:<br><pre style=\"font-family: 'Fira Code', monospace; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 10px; border-radius: 8px; margin-top: 8px;\">retailmax/\n  ├── __init__.py\n  ├── app.py\n  └── employees/\n      ├── __init__.py\n      └── validation.py</pre>However, running `python app.py` from the root directory throws a <code>ModuleNotFoundError: No module named 'retailmax'</code> when you execute <code>from retailmax.employees.validation import validate_salary</code>.",
+                question: "What is the primary cause of this error?",
+                options: [
+                    "The directory paths must use backslashes on Windows.",
+                    "The current working directory (project root) is not part of Python's sys.path, or you are running the script from inside the package directory instead of the parent folder.",
+                    "Python does not support nested __init__.py package layouts.",
+                    "The 'validation.py' file must be compiled into a .pyc file first."
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> Python resolves absolute package imports based on directories listed in <code>sys.path</code>. Running the script from a directory other than the project root (where the parent of <code>retailmax</code> lives) or failing to configure the PYTHONPATH is the standard reason why absolute imports fail with a ModuleNotFoundError.</p>"
+            },
+            {
+                scenario: "In <code>retailmax/api/async_service.py</code>, you fetch three microservice payloads concurrently using `asyncio.gather`:<br><pre style=\"font-family: 'Fira Code', monospace; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 10px; border-radius: 8px; margin-top: 8px;\">await asyncio.gather(\n    fetch_mock_endpoint(client, \"weather\", 0.5),\n    fetch_mock_endpoint(client, \"payroll\", 0.8),\n    fetch_mock_endpoint(client, \"attendance\", 0.4)\n)</pre>",
+                question: "Assuming no task fails, what is the approximate time taken to execute this concurrent operation?",
+                options: [
+                    "Approximately 1.7 seconds (0.5 + 0.8 + 0.4 seconds) because tasks run sequentially.",
+                    "Approximately 0.4 seconds because tasks run in order of the fastest endpoint.",
+                    "Approximately 0.8 seconds because the tasks run concurrently, so the total time is bound by the slowest task.",
+                    "Exactly 0.5 seconds because gather averages the latencies."
+                ],
+                correctIndex: 2,
+                explanation: "<p><strong>Why this is correct:</strong> With <code>asyncio.gather</code>, all coroutines are run concurrently. The event loop switches between tasks whenever they hit a non-blocking await (like network IO). Thus, the total elapsed time matches the duration of the longest-running task (0.8s), rather than the sum of all tasks.</p>"
+            },
+            {
+                scenario: "You are integrating async capability into a synchronous pipeline file `app.py`. You attempt to fetch auxiliary data directly using:<br><pre style=\"font-family: 'Fira Code', monospace; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 10px; border-radius: 8px; margin-top: 8px;\">result = fetch_all_auxiliary_data()</pre>where <code>fetch_all_auxiliary_data</code> is defined with `async def`.",
+                question: "What will happen at runtime in Python?",
+                options: [
+                    "The function runs normally in the background and returns a list of results.",
+                    "It returns a coroutine object without executing the function's internal statements, and Python raises a RuntimeWarning.",
+                    "The program raises a syntax error immediately during compilation.",
+                    "It blocks the main thread and runs sequentially."
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> In Python, calling an <code>async def</code> function returns a coroutine object. The code inside the function does not run until the coroutine is awaited (<code>await coroutine</code>) or run via an event loop (e.g., <code>asyncio.run(coroutine)</code>).</p>"
+            },
+            {
+                scenario: "You are type-hinting a function that retrieves an employee's salary. In some cases, the employee might not exist, in which case the function returns `None` instead of a float:<br><pre style=\"font-family: 'Fira Code', monospace; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 10px; border-radius: 8px; margin-top: 8px;\">def get_salary(employee_id: int) -> float: ...</pre>",
+                question: "How should you change the return type annotation to satisfy static checkers like mypy when `None` is returned?",
+                options: [
+                    "-> float or None",
+                    "-> Union[float, None] or -> Optional[float] (or -> float | None in Python 3.10+)",
+                    "-> Any",
+                    "-> None[float]"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> To denote that a return type can be either a specific type or `None`, you should use <code>typing.Optional[T]</code> or <code>typing.Union[T, None]</code>. Starting in Python 3.10, the pipe syntax <code>float | None</code> is also supported and preferred for readability.</p>"
+            },
+            {
+                scenario: "You have completed your code changes and want to run code quality tools. You notice that your imports are messy and unordered, and you have several unused import statements.",
+                question: "Which tool in the RetailMax linting suite is designed to automatically clean up and sort imports, and flag unused dependencies?",
+                options: [
+                    "Black",
+                    "Mypy",
+                    "Ruff",
+                    "Pytest"
+                ],
+                correctIndex: 2,
+                explanation: "<p><strong>Why this is correct:</strong> <code>Ruff</code> is an extremely fast Python linter written in Rust. It replaces tools like flake8, isort, and autoflake, meaning it handles both linting checks (like finding unused imports) and automatically sorting imports (equivalent to isort) when run with the `--fix` flag.</p>"
+            },
+            {
+                scenario: "Your retail pipeline runs 24/7. Logs are generated rapidly. If you use a simple logging configuration writing to <code>retailmax.log</code>, you risk running out of disk space on the production server.",
+                question: "Which logging class from Python's standard library should you configure to prevent logs from consuming infinite space?",
+                options: [
+                    "logging.StreamHandler",
+                    "logging.FileHandler",
+                    "logging.handlers.RotatingFileHandler",
+                    "logging.handlers.SMTPHandler"
+                ],
+                correctIndex: 2,
+                explanation: "<p><strong>Why this is correct:</strong> A <code>RotatingFileHandler</code> rotates log files when they reach a certain size (configured by <code>maxBytes</code>) and keeps a fixed maximum number of backup files (configured by <code>backupCount</code>), capping the maximum disk space used by logs.</p>"
+            },
+            {
+                scenario: "A junior developer asks: 'Why can't I just use print() statements in the code to track pipeline execution? It's much simpler than setting up a logger.'",
+                question: "Which of the following is the most critical production limitation of print() compared to a structured logger?",
+                options: [
+                    "print() cannot output string variables.",
+                    "print() output is always deleted when the program terminates.",
+                    "print() lacks standard severity levels (INFO, WARNING, etc.), timestamping, file-writing rules, thread safety, and routing configurations out-of-the-box.",
+                    "print() raises syntax errors when run inside docker containers."
+                ],
+                correctIndex: 2,
+                explanation: "<p><strong>Why this is correct:</strong> Python's <code>logging</code> framework provides structured levels (DEBUG, INFO, WARNING, ERROR, CRITICAL), timestamps, formatting options, and handlers to route outputs to multiple destinations (console, files, remote servers) concurrently and thread-safely, which raw <code>print()</code> does not support.</p>"
+            },
+            {
+                scenario: "You are writing a unit test with Pytest to verify that database records are saved correctly. You want to avoid modifying the production SQLite file or leaving temp files behind.",
+                question: "Which built-in Pytest fixture provides a temporary directory unique to the test run that is automatically cleaned up?",
+                options: [
+                    "tempfile",
+                    "tmp_path",
+                    "db_fixture",
+                    "pytest_temp"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> The <code>tmp_path</code> fixture is a built-in Pytest fixture that provides a unique directory path (as a <code>pathlib.Path</code> object) for each test function, ensuring file isolation and clean test runs.</p>"
+            },
+            {
+                scenario: "You want to handle data contract violations explicitly. You define a custom exception class:<br><pre style=\"font-family: 'Fira Code', monospace; font-size: 0.85rem; background: rgba(0,0,0,0.25); padding: 10px; border-radius: 8px; margin-top: 8px;\">class EmployeeValidationError(ValueError):\n    pass</pre>",
+                question: "What is the main software engineering benefit of raising this custom exception instead of a generic ValueError?",
+                options: [
+                    "It executes faster in the Python virtual machine.",
+                    "It allows callers to selectively catch and handle data validation issues without catching and masking other generic ValueErrors (e.g. parsing errors).",
+                    "It automatically logs the exception to the database.",
+                    "Mypy requires custom exceptions for type checking."
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> Custom exceptions provide precise domain control. When you catch a generic <code>ValueError</code>, you might accidentally catch and suppress other unintended errors. Custom exceptions allow specific error-handling blocks in your calling orchestrator.</p>"
+            },
+            {
+                scenario: "You need to make concurrent network requests inside your asynchronous functions. You look at Python's standard `requests` library and `httpx`.",
+                question: "Why should you use HTTPX's AsyncClient instead of Python's standard requests library inside asynchronous functions?",
+                options: [
+                    "requests does not support HTTP requests to JSON endpoints.",
+                    "requests is synchronous and blocks the entire single-threaded event loop during networking, whereas httpx.AsyncClient uses non-blocking sockets.",
+                    "httpx.AsyncClient is much easier to write than requests.",
+                    "Mypy does not support requests type annotations."
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> Python's <code>requests</code> library is synchronous and blocks the thread during network I/O. In an async application, a blocking call pauses the entire event loop, stopping all other concurrent tasks. <code>httpx.AsyncClient</code> uses async I/O socket calls, freeing the event loop while waiting for responses.</p>"
+            },
+            {
+                scenario: "An engineer claims: 'By using asyncio with async/await, our Python ETL pipeline will automatically run CPU-intensive mathematical aggregations in parallel across all 8 CPU cores.'",
+                question: "Why is this claim false?",
+                options: [
+                    "asyncio is restricted to running on single-core ARM processors only.",
+                    "Python's Global Interpreter Lock (GIL) and asyncio's cooperative single-threaded event loop model mean concurrency is achieved by interleaving task execution during I/O waits, not by executing multiple threads on separate cores in parallel.",
+                    "Math calculations are not supported inside async functions.",
+                    "asyncio.gather automatically creates subprocesses but limits them to 2 CPU cores maximum."
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> Cooperative multitasking in <code>asyncio</code> runs on a single thread. The event loop interleaves execution when a task yields control (e.g., using <code>await asyncio.sleep()</code> or network I/O). CPU-bound tasks do not yield, and because of Python's GIL, they cannot run in parallel on a single event loop without using multiprocessing.</p>"
+            },
+            {
+                scenario: "You want to understand the role of different checks. You run `mypy .` and then run your data validation contract script `validation.py`.",
+                question: "What is the key difference between static type checking (mypy) and runtime data contract checks?",
+                options: [
+                    "Static type checking is only for database queries, while data contracts are for API payloads.",
+                    "Static checking checks formatting syntax, while data contracts check code logic.",
+                    "Static checking (mypy) verifies type consistency of variables/signatures at compile time without running code; runtime data contracts validate actual database values and business rules (e.g., salary > 0) while the application is executing.",
+                    "Data contracts run inside unit tests, while static typing runs only in production."
+                ],
+                correctIndex: 2,
+                explanation: "<p><strong>Why this is correct:</strong> Static typing checking (`mypy`) analyses type correctness before execution (static analysis) but cannot verify dynamic runtime value values (such as verifying if a salary is positive or if an email format matches a regex). Runtime data contracts check the values during program execution.</p>"
+            },
+            {
+                scenario: "You are flattening nested JSON user payloads in `transformer.py`. One field is nested inside the 'company' dictionary: `{\"company\": {\"name\": \"RetailMax\"}}`. Some records might miss the 'company' key entirely.",
+                question: "Which dictionary extraction pattern retrieves the company name safely without raising a KeyError?",
+                options: [
+                    "company_name = user['company']['name']",
+                    "company_name = user.get('company', {}).get('name', 'Unknown')",
+                    "company_name = user.get('company')['name']",
+                    "company_name = user['company'].get('name', 'Unknown')"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> <code>user.get('company', {})</code> returns an empty dictionary if the 'company' key is missing. Calling <code>.get('name', 'Unknown')</code> on that returned dictionary ensures no KeyError is raised, falling back to 'Unknown' if the key is missing.</p>"
+            },
+            {
+                scenario: "In Day 5, we configure formatting and linting tools. You hear about Black and Ruff.",
+                question: "What is the standard functional division of labor between Black and Ruff in code verification?",
+                options: [
+                    "Black is used for typing validations, whereas Ruff is used for database indexing.",
+                    "Black automatically formats the code to enforce absolute styling conventions (spacing, quotes, etc.), while Ruff inspects the code for logical bugs, syntax issues, unused elements, and import ordering.",
+                    "Ruff formats the code, and Black verifies unit tests.",
+                    "Black is only for frontend CSS, while Ruff is for backend Python."
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> <code>Black</code> is an opinionated code formatter that rewrites files to enforce a single code style. <code>Ruff</code> is a static code analyzer (linter) that checks code for syntax errors, logical issues (e.g. unused variables), styling violations, and can sort imports.</p>"
+            },
+            {
+                scenario: "Your data contract defines the rule: monthly salary must be positive. An incoming API payload has `monthly_salary = -5000.00`. You run `clean_df, invalid_df = validate_employee_records(df)`.",
+                question: "What is the expected state of the output dataframes?",
+                options: [
+                    "The program terminates with a ValueError immediately.",
+                    "The invalid record is dropped completely, and invalid_df is empty.",
+                    "The invalid record is separated into `invalid_df`, allowing the rest of the valid rows in `clean_df` to proceed to the database safely.",
+                    "The salary is automatically set to 0.0 and kept in clean_df."
+                ],
+                correctIndex: 2,
+                explanation: "<p><strong>Why this is correct:</strong> The purpose of a data validation contract is to isolate corrupted data without halting the entire pipeline. The record is separated into <code>invalid_df</code> for logging/quarantine, and clean records in <code>clean_df</code> are safely processed.</p>"
+            },
+            {
+                scenario: "You want to configure Black to enforce a line length of 100 characters instead of its default 88 characters. You need to store this configuration in your project root.",
+                question: "In which file and under which configuration section should you add this setting?",
+                options: [
+                    "In .gitignore under [black]",
+                    "In pyproject.toml under [tool.black] with 'line-length = 100'",
+                    "In setup.py under black_settings = 100",
+                    "In ruff.toml under [formatter.black]"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> The standard configuration file for modern Python tools is <code>pyproject.toml</code>. Black configurations go in the <code>[tool.black]</code> table, e.g. <code>line-length = 100</code>.</p>"
+            },
+            {
+                scenario: "You are testing the email validation helper. You want to run the test function against several cases: 'test@domain.com', 'invalid-email', '@no-user.org', and 'user@domain.co.uk'.",
+                question: "Which pytest feature is designed to run the same test logic against a list of different inputs without duplicate test definitions?",
+                options: [
+                    "@pytest.fixture",
+                    "@pytest.mark.parametrize",
+                    "@pytest.mark.test_cases",
+                    "pytest.run_all()"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> <code>@pytest.mark.parametrize</code> allows you to define a list of arguments and expected outputs for a test, and pytest will run the test function once for each parameter set, generating separate test results.</p>"
+            },
+            {
+                scenario: "In `retailmax/api/service.py`, you make an HTTP requests call. You want to make sure that if the API endpoint returns a status code like 404 or 500, Python raises an exception immediately.",
+                question: "Which requests Response method implements this fail-fast behavior?",
+                options: [
+                    "response.check_status()",
+                    "response.raise_for_status()",
+                    "response.assert_ok()",
+                    "response.throw_errors()"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> The <code>response.raise_for_status()</code> method in <code>requests</code> (and similarly in <code>httpx</code>) checks if the HTTP status code is a 4xx or 5xx error. If so, it raises an <code>HTTPError</code> exception.</p>"
+            },
+            {
+                scenario: "You add a new module `analytics/` to `retailmax/`. You want to import functions using `from retailmax.analytics.analyzer import generate_report`.",
+                question: "What is the standard python packaging file that should reside inside `analytics/` to mark it as a package directory?",
+                options: [
+                    "__main__.py",
+                    "__init__.py",
+                    "setup.cfg",
+                    "package.json"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> The <code>__init__.py</code> file is used to mark directory structures on disk as Python package namespaces, enabling clean, structured imports.</p>"
+            },
+            {
+                scenario: "You want to automate code formatting, lint checks, type verification, and unit tests in your team's CI/CD pipeline on every Git push.",
+                question: "Which shell command sequence represents the standard quality gate execution order in a CI workflow?",
+                options: [
+                    "pytest && black --check . && ruff check . && mypy .",
+                    "black --check . && ruff check . && mypy . && pytest",
+                    "python app.py && pytest --format",
+                    "mypy --fix && ruff --check"
+                ],
+                correctIndex: 1,
+                explanation: "<p><strong>Why this is correct:</strong> Standard quality gates start with fast static analysis: syntax formatting checking (<code>black --check .</code>), linting rules checks (<code>ruff check .</code>), static type analysis (<code>mypy .</code>), and finally executing runtime tests (<code>pytest</code>) if all static checks pass.</p>"
+            }
+        ];
+
+        // State variables
+        let username = "";
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedOptionIndex = null;
+        let isAnswerChecked = false;
+        let userAnswers = []; // Records user performance
+
+        // DOM elements
+        const welcomeScreen = document.getElementById("welcomeScreen");
+        const questionScreen = document.getElementById("questionScreen");
+        const resultScreen = document.getElementById("resultScreen");
+        const progressContainer = document.getElementById("progressContainer");
+        const progressBar = document.getElementById("progressBar");
+        
+        const usernameInput = document.getElementById("usernameInput");
+        const startBtn = document.getElementById("startBtn");
+        const quizSubtitle = document.getElementById("quizSubtitle");
+        
+        const scenarioText = document.getElementById("scenarioText");
+        const questionText = document.getElementById("questionText");
+        const optionsList = document.getElementById("optionsList");
+        
+        const explanationBox = document.getElementById("explanationBox");
+        const explanationHeader = document.getElementById("explanationHeader");
+        const explanationDesc = document.getElementById("explanationDesc");
+        
+        const questionNumber = document.getElementById("questionNumber");
+        const actionBtn = document.getElementById("actionBtn");
+        const restartBtn = document.getElementById("restartBtn");
+        const reviewList = document.getElementById("reviewList");
+        const scoreVal = document.getElementById("scoreVal");
+        const scoreTotal = document.getElementById("scoreTotal");
+        const scoreFill = document.getElementById("scoreFill");
+        const badgeTitle = document.getElementById("badgeTitle");
+        const badgeDesc = document.getElementById("badgeDesc");
+
+        // Start button handler
+        startBtn.addEventListener("click", () => {
+            username = usernameInput.value.trim() || "Candidate";
+            welcomeScreen.style.display = "none";
+            questionScreen.style.display = "block";
+            progressContainer.style.display = "block";
+            
+            quizSubtitle.textContent = `Welcome ${username}! Solve these scenarios to validate Day 5 concepts.`;
+            scoreTotal.textContent = `/${questions.length}`;
+            loadQuestion(0);
+        });
+
+        // Load question at index
+        function loadQuestion(index) {
+            currentQuestionIndex = index;
+            selectedOptionIndex = null;
+            isAnswerChecked = false;
+            
+            const q = questions[index];
+            
+            // Progress Bar
+            const percent = (index / questions.length) * 100;
+            progressBar.style.width = `${percent}%`;
+            
+            // Hide explanation
+            explanationBox.style.display = "none";
+            
+            // Populate content
+            scenarioText.innerHTML = q.scenario;
+            questionText.textContent = q.question;
+            questionNumber.textContent = `Question ${index + 1} of ${questions.length}`;
+            
+            // Action button setup
+            actionBtn.textContent = "Check Answer";
+            actionBtn.disabled = true;
+            
+            // Build options
+            optionsList.innerHTML = "";
+            q.options.forEach((optText, optIdx) => {
+                const card = document.createElement("div");
+                card.className = "option-card";
+                card.id = `option-${optIdx}`;
+                card.innerHTML = `
+                    <div class="option-radio"></div>
+                    <div class="option-text">${optText}</div>
+                `;
+                
+                card.addEventListener("click", () => {
+                    if (isAnswerChecked) return;
+                    selectOption(optIdx);
+                });
+                
+                optionsList.appendChild(card);
+            });
+        }
+
+        // Handle option selection
+        function selectOption(idx) {
+            selectedOptionIndex = idx;
+            actionBtn.disabled = false;
+            
+            // Highlight selected option
+            document.querySelectorAll(".option-card").forEach((card, cIdx) => {
+                if (cIdx === idx) {
+                    card.classList.add("selected");
+                } else {
+                    card.classList.remove("selected");
+                }
+            });
+        }
+
+        // Action button click handler
+        actionBtn.addEventListener("click", () => {
+            if (!isAnswerChecked) {
+                checkAnswer();
+            } else {
+                nextQuestion();
+            }
+        });
+
+        // Check selected answer
+        function checkAnswer() {
+            isAnswerChecked = true;
+            const q = questions[currentQuestionIndex];
+            const isCorrect = (selectedOptionIndex === q.correctIndex);
+            
+            // Record answer for final summary
+            userAnswers.push({
+                questionIndex: currentQuestionIndex,
+                selected: selectedOptionIndex,
+                correct: q.correctIndex,
+                isCorrect: isCorrect
+            });
+
+            if (isCorrect) {
+                score++;
+                explanationHeader.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                    Correct Answer!
+                `;
+                explanationHeader.className = "explanation-header correct-text";
+            } else {
+                explanationHeader.innerHTML = `
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    Incorrect Answer
+                `;
+                explanationHeader.className = "explanation-header incorrect-text";
+            }
+            
+            explanationDesc.innerHTML = q.explanation;
+            explanationBox.style.display = "block";
+            
+            // Style options based on validation
+            document.querySelectorAll(".option-card").forEach((card, cIdx) => {
+                if (cIdx === q.correctIndex) {
+                    card.classList.add("correct");
+                } else if (cIdx === selectedOptionIndex) {
+                    card.classList.add("incorrect");
+                }
+                card.style.cursor = "default";
+            });
+            
+            // Update button label
+            if (currentQuestionIndex < questions.length - 1) {
+                actionBtn.textContent = "Next Question";
+            } else {
+                actionBtn.textContent = "Show Final Results";
+            }
+        }
+
+        // Load next question or show results
+        function nextQuestion() {
+            if (currentQuestionIndex < questions.length - 1) {
+                loadQuestion(currentQuestionIndex + 1);
+            } else {
+                showResults();
+            }
+        }
+
+        // Show final results screen
+        function showResults() {
+            questionScreen.style.display = "none";
+            resultScreen.style.display = "block";
+            progressBar.style.width = "100%";
+            
+            // Set circle progress animation
+            const circumference = 2 * Math.PI * 70; // 439.8
+            const offset = circumference - (score / questions.length) * circumference;
+            scoreFill.style.strokeDasharray = circumference;
+            
+            setTimeout(() => {
+                scoreFill.style.strokeDashoffset = offset;
+            }, 100);
+            
+            scoreVal.textContent = score;
+            
+            // Badges evaluations
+            let badge = "";
+            let desc = "";
+            
+            if (score >= 19) {
+                badge = "Lead Enterprise Software Architect 🏆";
+                desc = `Outstanding job, ${username}! You scored ${score}/${questions.length}. You have demonstrated flawless mastery of modern Python packaging structure, async concurrent network requests, type safety with MyPy, isolated unit tests with Pytest fixtures, rotating file handlers, and CI/CD automated test workflows. You are ready to architect production-ready systems!`;
+            } else if (score >= 15) {
+                badge = "Senior Software Engineer 🚀";
+                desc = `Excellent work, ${username}! You scored ${score}/${questions.length}. You have a very strong grasp of the Day 5 pipeline codebase, async concurrency patterns, custom domain exception architectures, and static checkers like Black and Ruff. Review any incorrect answers in the detailed log below to unlock perfect mastery.`;
+            } else if (score >= 10) {
+                badge = "Associate Backend Developer 💻";
+                desc = `Nice work, ${username}! You scored ${score}/${questions.length}. You understand the basics of packaging, validation contracts, and unit testing, but we recommend brushing up on async task scheduling, RotatingFileHandlers, and parameterized testing configurations to advance further.`;
+            } else {
+                badge = "Junior System Operator ⚙️";
+                desc = `You scored ${score}/${questions.length}. Use the comprehensive answers summary below to review each scenario. Re-read the RetailMax Day 5 codebase comments on asynchronous I/O and custom exception handlers, and try again to improve your standing!`;
+            }
+            
+            badgeTitle.textContent = badge;
+            badgeDesc.textContent = desc;
+            
+            // Build Review list
+            reviewList.innerHTML = "";
+            userAnswers.forEach((ans) => {
+                const q = questions[ans.questionIndex];
+                const card = document.createElement("div");
+                card.className = "review-card";
+                card.innerHTML = `
+                    <div class="review-card-header">
+                        <span>Scenario ${ans.questionIndex + 1}</span>
+                        <span class="status-pill ${ans.isCorrect ? 'correct' : 'incorrect'}">
+                            ${ans.isCorrect ? 'Correct' : 'Incorrect'}
+                        </span>
+                    </div>
+                    <div class="review-q-text">${q.question}</div>
+                    <div class="review-ans-row">
+                        <span>Your selection:</span> 
+                        <pre style="font-family: 'Fira Code', monospace; font-size: 0.85rem; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px; overflow-x: auto; margin-top: 4px; border: 1px solid rgba(255,255,255,0.05); color: var(--text-main);">${q.options[ans.selected]}</pre>
+                    </div>
+                    ${!ans.isCorrect ? `
+                    <div class="review-ans-row" style="margin-top: 10px;">
+                        <span style="color: var(--color-success);">Correct answer:</span> 
+                        <pre style="font-family: 'Fira Code', monospace; font-size: 0.85rem; background: rgba(16, 185, 129, 0.05); border: 1px solid rgba(16, 185, 129, 0.1); padding: 8px; border-radius: 6px; overflow-x: auto; margin-top: 4px; color: var(--color-success);">${q.options[ans.correct]}</pre>
+                    </div>` : ''}
+                    <div style="margin-top: 14px; font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
+                        ${q.explanation}
+                    </div>
+                `;
+                reviewList.appendChild(card);
+            });
+        }
+
+        // Restart quiz handler
+        restartBtn.addEventListener("click", () => {
+            score = 0;
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            
+            resultScreen.style.display = "none";
+            questionScreen.style.display = "block";
+            
+            // Reset stroke fill
+            scoreFill.style.strokeDashoffset = 440;
+            
+            loadQuestion(0);
+        });
+    </script>
+</body>
+</html>
